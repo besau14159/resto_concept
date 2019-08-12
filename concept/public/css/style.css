@@ -1,0 +1,9 @@
+body {
+        padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
+		margin-top: 30px;
+    }
+i { margin-right: 10px; }
+.navbar-inner h1 { color: white;  }
+.span1, .span2, .span3, .span4, .span5, .span6, 
+.span7, .span8, .span9, .span10,.span11,.span12 { background-color: #ddd; border-radius: 5px; }
+.masquer { display: none; }
