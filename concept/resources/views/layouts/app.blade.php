@@ -14,22 +14,8 @@
 
   <body>
     <nav class="navbar navbar-dark bg-dark fixed-top">
-      <div class="navbar-inner">
-        <div class="container-fluid">
-			<div class="row justify-content-between">
-				<div class="col-4">
-					<div>
-						<a href="/"><h1>Les restaurants Concept!</h1></a>
-					</div>
-				</div>
-				<div class="col-4">
-					<div>
-						<h2>Bonjour</h2>
-					</div>
-				</div>
-			</div>
-        </div>
-      </div>
+      <a class="navbar-brand" href="#">Concept!</a>
+	  <button class="btn btn-outline-success btn-connexion" type="submit">Se connecter</button>
     </nav>
     <div class="container">
        @yield('contenu')
