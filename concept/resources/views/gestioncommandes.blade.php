@@ -9,20 +9,20 @@
 		</div>
 	</div>
     
-    <table class="table table-striped table-bordered">
+    <table class="table table-dark table-striped table-bordered table-hover">
     <thead>
       <tr>
-        <th class="col-md-4 text-center">Numéro</th>
-        <th class="col-md-8">Date</th>
+        <th scope="col">Numéro</th>
+        <th scope="col">Nom client</th>
+		<th scope="col">Téléphone</th>
       </tr>
     </thead>
     <tbody>
     @foreach($commandes as $commande)
       <tr>
-        <td class="text-center">{{ $commande['idCommande'] }}</td>
-        <td>
-          <strong>{{ $commande['datecommande'] }}</strong>
-        </td>
+        <td>{{ $commande['idCommande'] }}</td>
+        <td>{{ $commande['nom'] }}</td>
+		<td>{{ $commande['telephone']}}</td>
       </tr>
     @endforeach
     </tbody>

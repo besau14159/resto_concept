@@ -50,9 +50,11 @@ $app->get('/connexion', function () use ($app) {
 $app->get('/gestioncommandes', function () use ($app) {
 	$connexion = obtenirConnexion();
     $requete = $connexion->query(
-        'SELECT * ' .
-        'FROM commandes ' .
-        'WHERE idetat = 1');
+        'SELECT commandes.idCommande AS idCommande, CONCAT(comptes.prenom, " ", comptes.nom) ' .
+		'AS nom, comptes.telephone AS telephone ' .
+        'FROM commandes INNER JOIN comptes ' .
+		'ON commandes.noClient = comptes.noCompte ' .
+        'WHERE idetat = 3');
     $commandes = $requete->fetchAll();
     $requete->closeCursor();
     $connexion = null;

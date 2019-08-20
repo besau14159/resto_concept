@@ -15,7 +15,11 @@
   <body>
     <nav class="navbar navbar-dark bg-dark fixed-top">
       <a class="navbar-brand" href="#">Concept!</a>
+	  @IF(!ISSET($SESSION["utilisateur"]))
 	  <a class="btn btn-outline-success" href="connexion" type="button">Se connecter</a>
+	  @ELSE
+	  <div>Bonjour, NOM UTILISATEUR</div>
+      @ENDIF
     </nav>
     <div class="container">
        @yield('contenu')
@@ -25,6 +29,7 @@
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
 	<script>
+		
 	</script>
   </body>
 </html>
