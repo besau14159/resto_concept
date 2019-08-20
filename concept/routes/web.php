@@ -60,3 +60,190 @@ $app->get('/gestioncommandes', function () use ($app) {
     $connexion = null;
 	return view('gestioncommandes', ['commandes' => $commandes]);
 });
+
+$app->get('ajouterMenu', function() use($app)
+{
+    session_start();
+
+    if(!isset($_SESSION['resto']))
+    {
+        return redirect('restaurants/{selected}');
+    }
+
+    if(!isset($_SESSION['items']))
+    {
+        $connexion = obtenirConnexion();
+        $requete = $connexion->query(
+        'SELECT * FROM produits');
+        $items = $requete->fetchAll();
+        $requete->closeCursor();
+        $connexion = null;
+
+        $_SESSION['items'] = $items;
+    }
+
+    if (!isset($_SESSION['itemAAjouter']))
+    {
+        $_SESSION['itemsMenu'] = array();
+        
+        $_SESSION['itemAAjouter'] = 0;
+
+        $_SESSION['itemAEnlever'] = 0;
+    }
+
+    
+
+    return view('ajouterMenu');
+});
+
+$app->get('selectionnerItemListe/{selected}', function($selected) use($app)
+{
+    session_start();
+
+    if ($selected != '%7Bselected%7D')
+    {
+        $_SESSION['itemAAjouter'] = $selected;
+    }
+
+    return redirect('ajouterMenu');
+});
+
+$app->get('selectionnerItemMenu/{selected}', function($selected) use($app)
+{
+    session_start();
+
+    if ($selected != '%7Bselected%7D')
+    {
+        $_SESSION['itemAEnlever'] = $selected;
+    }
+
+    return redirect('ajouterMenu');
+});
+
+$app->get('ajouterItem', function() use($app)
+{
+    session_start();
+
+    if ($_SESSION['itemAAjouter'] != 0)
+    {
+        $trouver = 0;
+
+        foreach ($_SESSION['itemsMenu'] as $item) 
+        {
+            if ($item['idProduit'] == $_SESSION['itemAAjouter'])
+            {   
+                $trouver = 1;
+            }
+        }
+
+        if ($trouver == 0)
+        {
+           foreach ($_SESSION['items'] as $item) 
+           {
+                if ($item['idProduit'] == $_SESSION['itemAAjouter']) 
+                {
+                    $itemAAjouter = $item;
+                }
+            } 
+
+            array_push($_SESSION['itemsMenu'], $itemAAjouter);
+        }
+        
+        $_SESSION['itemAAjouter'] = 0;
+    }
+
+    return redirect('ajouterMenu');
+});
+
+$app->get('enleverItem', function() use($app)
+{
+    session_start();
+
+    if ($_SESSION['itemAEnlever'] != 0)
+    {
+        $imenu = array();
+
+        foreach ($_SESSION['itemsMenu'] as $item) 
+        {
+            if ($item['idProduit'] != $_SESSION['itemAEnlever']) 
+            {
+                array_push($imenu, $item);            
+            }
+        } 
+
+        $_SESSION['itemsMenu'] = $imenu;
+        $_SESSION['itemAEnlever'] = 0;
+    }
+
+    return redirect('ajouterMenu');
+});
+
+$app->get('restaurants/{selected}', function($selected) use($app)
+{
+    session_start();
+
+    if ($selected != '%7Bselected%7D')
+    {
+        $_SESSION['resto'] = $selected;
+    }
+
+    if(!isset($_SESSION['restaurants']))
+    {
+        $connexion = obtenirConnexion();
+        $requete = $connexion->query(
+        'SELECT * FROM restaurants');
+        $restaurants = $requete->fetchAll();
+        $requete->closeCursor();
+        $connexion = null;
+
+        $_SESSION['restaurants'] = $restaurants;
+    }
+    
+
+    return view('restaurants',
+                ['selected' => $selected]);
+});
+
+$app->post('recherche', function() use($app){
+    $chaine = $app->request->input('recherche');    
+
+    if ($chaine != '')
+    {
+        $connexion = obtenirConnexion();
+        $requete = $connexion->prepare(
+            'SELECT idresto FROM restaurants
+            WHERE LOCATE(:chaine,nomresto) > 0 ');
+        $requete->execute(['chaine' => $chaine]);
+        $selected = $requete->fetch();
+        $requete->closeCursor();
+        $connexion = null;
+    }
+    else
+    {
+        $selected['idresto'] = 0;
+    }
+
+    return redirect('restaurants/' . $selected['idresto']);
+});
+
+$app->post('rechercheItem', function() use($app){
+    $chaine = $app->request->input('recherche');    
+    $selected = null;
+
+    if ($chaine != '')
+    {
+        $connexion = obtenirConnexion();
+        $requete = $connexion->prepare(
+            'SELECT idproduit FROM produits
+            WHERE LOCATE(:chaine,nomProd) > 0 ');
+        $requete->execute(['chaine' => $chaine]);
+        $selected = $requete->fetch();
+        $requete->closeCursor();
+        $connexion = null;
+    }
+    
+    if ($selected == null)
+        $selected['idproduit'] = 0;
+    
+    return redirect('ajouterMenu/' . $selected['idproduit']);
+});
