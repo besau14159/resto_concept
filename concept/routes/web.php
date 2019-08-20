@@ -14,3 +14,11 @@
 $app->get('/', function () use ($app) {
     return view('accueil');
 });
+
+$app->get('/connexion', function () use ($app) {
+	return view('accueil');
+});
+
+$app->get('/gestioncommandes', function () use ($app) {
+	return view('gestioncommandes');
+});

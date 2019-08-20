@@ -15,7 +15,7 @@
   <body>
     <nav class="navbar navbar-dark bg-dark fixed-top">
       <a class="navbar-brand" href="#">Concept!</a>
-	  <button class="btn btn-outline-success btn-connexion" type="submit">Se connecter</button>
+	  <a class="btn btn-outline-success" href="connexion" type="button">Se connecter</a>
     </nav>
     <div class="container">
        @yield('contenu')
