@@ -5,7 +5,7 @@
 		<div class="row justify-content-center">
 			<div class="col">
 				<h1 class="text-center">Commandes en attente</h1>
-			</col>
+			</div>
 		</div>
 	</div>
     
@@ -26,19 +26,44 @@
 		<td>{{ $commande['telephone']}}</td>
 		<td>
 			<a href="/gestioncommandes/{{ $commande['idCommande']}}" class="btn btn-success">Sélectionner</a>
-			<a href="#" class="btn btn-success">Accepter</a>
 		</td>
       </tr>
     @endforeach
     </tbody>
 	</table>
   
+	@if(ISSET($details))
+	<div class="container-fluid">
+		<div class="row justify-content-center">
+			<div class="col">
+				<h1 class="text-center">Détails de la commande {{$id}}</h1>
+			</div>
+		</div>
+	</div>
+	<table class="table table-dark table-striped table-bordered table-hover">
+    <thead>
+      <tr>
+        <th scope="col">Numéro de produit</th>
+        <th scope="col">Quantité</th>
+      </tr>
+    </thead>
+    <tbody>
+    @foreach($details as $commande)
+      <tr>
+        <td>{{ $commande['noProduit'] }}</td>
+        <td>{{ $commande['qte'] }}</td>
+      </tr>
+    @endforeach
+    </tbody>
+	</table>
+	@endif
+  
 	@if(ISSET($historique))
-		<div class="container-fluid">
+	<div class="container-fluid">
 		<div class="row justify-content-center">
 			<div class="col">
 				<h1 class="text-center">Historique client</h1>
-			</col>
+			</div>
 		</div>
 	</div>
 	<table class="table table-dark table-striped table-bordered table-hover">

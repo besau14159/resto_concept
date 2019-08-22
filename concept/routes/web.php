@@ -62,6 +62,7 @@ $app->get('/gestioncommandes', function () use ($app) {
 });
 
 $app->get('/gestioncommandes/{idCommande}', function ($idCommande) use ($app) {
+	session_start();
 	$connexion = obtenirConnexion();
     $requete = $connexion->query(
         'SELECT commandes.idCommande AS idCommande, CONCAT(comptes.prenom, " ", comptes.nom) ' .
@@ -71,7 +72,6 @@ $app->get('/gestioncommandes/{idCommande}', function ($idCommande) use ($app) {
         'WHERE idetat = 3');
     $commandes = $requete->fetchAll();
     $requete->closeCursor();
-	$connexion = null;
 	
 	$connexion = obtenirConnexion();
 	$requete2 = $connexion->query(
@@ -81,8 +81,17 @@ $app->get('/gestioncommandes/{idCommande}', function ($idCommande) use ($app) {
 	);
 	$historique = $requete2->fetchAll();
 	$requete2->closeCursor();
+	
+	$connexion = obtenirConnexion();
+	$requete3 = $connexion->query(
+		'SELECT noProduit, qte ' .
+		'FROM items_commande ' .
+		'WHERE noCommande = '. $idCommande
+	);
+	$details = $requete3->fetchAll();
+	$requete3->closeCursor();
     $connexion = null;
-	return view('gestioncommandes', ['commandes' => $commandes], ['historique' => $historique]);
+	return view('gestioncommandes', ['id' => $idCommande, 'commandes' => $commandes, 'details' => $details, 'historique' => $historique]);
 });
 
 $app->get('ajouterMenu', function() use($app)
