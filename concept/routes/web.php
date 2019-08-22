@@ -61,6 +61,30 @@ $app->get('/gestioncommandes', function () use ($app) {
 	return view('gestioncommandes', ['commandes' => $commandes]);
 });
 
+$app->get('/gestioncommandes/{idCommande}', function ($idCommande) use ($app) {
+	$connexion = obtenirConnexion();
+    $requete = $connexion->query(
+        'SELECT commandes.idCommande AS idCommande, CONCAT(comptes.prenom, " ", comptes.nom) ' .
+		'AS nom, comptes.telephone AS telephone ' .
+        'FROM commandes INNER JOIN comptes ' .
+		'ON commandes.noClient = comptes.noCompte ' .
+        'WHERE idetat = 3');
+    $commandes = $requete->fetchAll();
+    $requete->closeCursor();
+	$connexion = null;
+	
+	$connexion = obtenirConnexion();
+	$requete2 = $connexion->query(
+		'SELECT datecommande, commentaires ' .
+		'FROM commandes ' .
+		'WHERE noClient = (SELECT noClient FROM commandes WHERE idCommande = '. $idCommande.')'
+	);
+	$historique = $requete2->fetchAll();
+	$requete2->closeCursor();
+    $connexion = null;
+	return view('gestioncommandes', ['commandes' => $commandes], ['historique' => $historique]);
+});
+
 $app->get('ajouterMenu', function() use($app)
 {
     session_start();
