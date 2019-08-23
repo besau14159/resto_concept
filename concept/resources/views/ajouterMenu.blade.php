@@ -32,11 +32,11 @@
       <tbody>       
   @foreach ($_SESSION['items'] as $item)
     @if($item['idProduit'] == $_SESSION['itemAAjouter'])
-        <tr bgcolor="lightgrey">
+        <tr bgcolor="grey">
     @else
         <tr>
     @endif
-          <td><a href="/selectionnerItemListe/{{ $item['idProduit'] }}" class ="glyphicon glyphicon-plus"></a> {{ $item['nomProd'] }}</td>
+          <td><a href="/selectionnerItemListe/{{ $item['idProduit'] }}" >{{ $item['nomProd'] }}</a> </td>
           <td>{{ $item['prixProd'] }}</td>
         </tr>
   @endforeach       
@@ -64,11 +64,11 @@
 
     @foreach ($_SESSION['itemsMenu'] as $item)
       @if($item['idProduit'] == $_SESSION['itemAEnlever'])
-        <tr bgcolor="lightgrey">
+        <tr bgcolor="grey">
       @else
         <tr>
       @endif
-          <td><a href="/selectionnerItemMenu/{{ $item['idProduit'] }}" class ="glyphicon glyphicon-minus"></a> {{ $item['nomProd'] }}</td>
+          <td><a href="/selectionnerItemMenu/{{ $item['idProduit'] }}">{{ $item['nomProd'] }} </a> </td>
           <td>{{ $item['prixProd'] }}</td>
         </tr>
   @endforeach
