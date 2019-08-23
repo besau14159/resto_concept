@@ -40,6 +40,8 @@ function obtenirConnexion()
 */
 
 $app->get('/', function () use ($app) {
+    session_start();
+    session_destroy();
     return view('accueil');
 });
 
@@ -94,7 +96,7 @@ $app->get('/gestioncommandes/{idCommande}', function ($idCommande) use ($app) {
 	return view('gestioncommandes', ['id' => $idCommande, 'commandes' => $commandes, 'details' => $details, 'historique' => $historique]);
 });
 
-$app->get('ajouterMenu', function() use($app)
+$app->get('/ajouterMenu', function() use($app)
 {
     session_start();
 
@@ -126,10 +128,10 @@ $app->get('ajouterMenu', function() use($app)
 
     
 
-    return view('ajouterMenu');
+    return view('/ajouterMenu');
 });
 
-$app->get('selectionnerItemListe/{selected}', function($selected) use($app)
+$app->get('/selectionnerItemListe/{selected}', function($selected) use($app)
 {
     session_start();
 
@@ -138,10 +140,10 @@ $app->get('selectionnerItemListe/{selected}', function($selected) use($app)
         $_SESSION['itemAAjouter'] = $selected;
     }
 
-    return redirect('ajouterMenu');
+    return redirect('/ajouterMenu');
 });
 
-$app->get('selectionnerItemMenu/{selected}', function($selected) use($app)
+$app->get('/selectionnerItemMenu/{selected}', function($selected) use($app)
 {
     session_start();
 
@@ -150,10 +152,10 @@ $app->get('selectionnerItemMenu/{selected}', function($selected) use($app)
         $_SESSION['itemAEnlever'] = $selected;
     }
 
-    return redirect('ajouterMenu');
+    return redirect('/ajouterMenu');
 });
 
-$app->get('ajouterItem', function() use($app)
+$app->get('/ajouterItem', function() use($app)
 {
     session_start();
 
@@ -185,10 +187,10 @@ $app->get('ajouterItem', function() use($app)
         $_SESSION['itemAAjouter'] = 0;
     }
 
-    return redirect('ajouterMenu');
+    return redirect('/ajouterMenu');
 });
 
-$app->get('enleverItem', function() use($app)
+$app->get('/enleverItem', function() use($app)
 {
     session_start();
 
@@ -208,10 +210,10 @@ $app->get('enleverItem', function() use($app)
         $_SESSION['itemAEnlever'] = 0;
     }
 
-    return redirect('ajouterMenu');
+    return redirect('/ajouterMenu');
 });
 
-$app->get('restaurants/{selected}', function($selected) use($app)
+$app->get('/restaurants/{selected}', function($selected) use($app)
 {
     session_start();
 
@@ -233,11 +235,11 @@ $app->get('restaurants/{selected}', function($selected) use($app)
     }
     
 
-    return view('restaurants',
+    return view('/restaurants',
                 ['selected' => $selected]);
 });
 
-$app->post('recherche', function() use($app){
+$app->post('/recherche', function() use($app){
     $chaine = $app->request->input('recherche');    
 
     if ($chaine != '')
@@ -256,10 +258,10 @@ $app->post('recherche', function() use($app){
         $selected['idresto'] = 0;
     }
 
-    return redirect('restaurants/' . $selected['idresto']);
+    return redirect('/restaurants/' . $selected['idresto']);
 });
 
-$app->post('rechercheItem', function() use($app){
+$app->post('/rechercheItem', function() use($app){
     $chaine = $app->request->input('recherche');    
     $selected = null;
 
@@ -278,5 +280,35 @@ $app->post('rechercheItem', function() use($app){
     if ($selected == null)
         $selected['idproduit'] = 0;
     
-    return redirect('ajouterMenu/' . $selected['idproduit']);
+    return redirect('/selectionnerItemListe/' . $selected['idproduit']);
+});
+
+$app->post('/titreMenu', function() use($app)
+{
+    session_start();
+    $chaine = $app->request->input('titreMenu');    
+
+    if ($chaine != '')
+    {
+        $_SESSION['titreMenu'] = $chaine;
+    }
+    else
+    {
+        
+    }
+
+    return redirect('/ajouterMenu');
+});
+
+$app->get('/ChangerTitre', function() use($app)
+{
+    session_start();
+    unset($_SESSION['titreMenu']);
+
+    return redirect('/ajouterMenu');
+});
+
+$app->get('/infoItem/{selected}', function($selected) use($app)
+{
+    
 });

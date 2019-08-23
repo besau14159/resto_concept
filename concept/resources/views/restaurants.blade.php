@@ -1,11 +1,12 @@
 @extends('layouts.app')
 
 @section('contenu')
+
   <h1 class="text-center"><strong>Succursale</strong></h1>
   
   <form method="POST" action="/recherche">Recherche(par nom, adresse)   
     <input type="text" id="recherche" name="recherche">
-    <button type="submit" class="btn btn-success">Recherche</button>
+    <button type="submit" class="btn btn-outline-success">Recherche</button>
   </form>
 
 
@@ -25,7 +26,7 @@
     @foreach($_SESSION['restaurants'] as $unRestaurant)
 
     @if($unRestaurant['idResto'] == $selected)
-      <tr bgcolor="lightgrey">
+      <tr bgcolor="darkgrey">
     @else
       <tr>
     @endif
