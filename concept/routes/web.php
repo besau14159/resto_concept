@@ -50,6 +50,11 @@ $app->get('/connexion', function () use ($app) {
 });
 
 $app->get('/gestioncommandes', function () use ($app) {
+	session_start();
+	
+	if(!isset($_SESSION['utilisateur']) || $_SESSION['utilisateur']['notpCompte'] != 2){
+		return view('erreur');
+	}
 	$connexion = obtenirConnexion();
     $requete = $connexion->query(
         'SELECT commandes.idCommande AS idCommande, CONCAT(comptes.prenom, " ", comptes.nom) ' .
