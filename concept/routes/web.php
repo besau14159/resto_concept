@@ -394,3 +394,25 @@ $app->get('/infoItem/{selected}', function($selected) use($app)
     return view('/infoItem',
                 ['item' => $item]);
 });
+
+
+
+/*
+|--------------------------------------------------------------------------
+| Commande Routes Debut
+|--------------------------------------------------------------------------
+
+*/
+
+$app->get('/commande', function () use ($app) {
+    session_start();
+    session_destroy();
+    return view('commande');
+});
+
+/*
+|--------------------------------------------------------------------------
+| Commande Routes Fin
+|--------------------------------------------------------------------------
+
+*/
