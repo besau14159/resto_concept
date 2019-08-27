@@ -53,8 +53,9 @@ $app->get('/gestioncommandes', function () use ($app) {
 	session_start();
 	
 	if(!isset($_SESSION['utilisateur']) || $_SESSION['utilisateur']['notpCompte'] != 2){
-		return view('erreur');
+		//return view('erreur');
 	}
+	
 	$connexion = obtenirConnexion();
     $requete = $connexion->query(
         'SELECT commandes.idCommande AS idCommande, CONCAT(comptes.prenom, " ", comptes.nom) ' .
@@ -91,8 +92,9 @@ $app->get('/gestioncommandes/{idCommande}', function ($idCommande) use ($app) {
 	
 	$connexion = obtenirConnexion();
 	$requete3 = $connexion->query(
-		'SELECT noProduit, qte ' .
-		'FROM items_commande ' .
+		'SELECT produits.nomProd AS noProduit, items_commande.qte AS qte' .
+		'FROM items_commande INNER JOIN produits ' .
+		'ON items_commande.noProduit = produits.idProduit ' .
 		'WHERE noCommande = '. $idCommande
 	);
 	$details = $requete3->fetchAll();
