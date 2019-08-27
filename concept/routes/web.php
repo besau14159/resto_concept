@@ -102,7 +102,12 @@ $app->get('/ajouterMenu', function() use($app)
 
     if(!isset($_SESSION['resto']))
     {
-        return redirect('restaurants/{selected}');
+        return redirect('/restaurants/{selected}');
+    }
+
+    if(!isset($_SESSION['titreMenu']))
+    {
+        return redirect('/donneeMenu');
     }
 
     if(!isset($_SESSION['items']))
@@ -124,9 +129,7 @@ $app->get('/ajouterMenu', function() use($app)
         $_SESSION['itemAAjouter'] = 0;
 
         $_SESSION['itemAEnlever'] = 0;
-    }
-
-    
+    }  
 
     return view('/ajouterMenu');
 });
@@ -283,32 +286,111 @@ $app->post('/rechercheItem', function() use($app){
     return redirect('/selectionnerItemListe/' . $selected['idproduit']);
 });
 
-$app->post('/titreMenu', function() use($app)
+$app->post('/donneeMenu', function() use($app)
 {
     session_start();
-    $chaine = $app->request->input('titreMenu');    
-
-    if ($chaine != '')
+    $titre = $app->request->input('titreMenu');
+    if ($titre == '') 
     {
-        $_SESSION['titreMenu'] = $chaine;
+        $_SESSION['message'] = 'Vous devez entrer le titre du menu';
+        return redirect('/donneeMenu');
+    }
+    unset($_SESSION['message']);
+
+    $commentaire = $app->request->input('commentaire');
+    $actif = $app->request->input('chkActif');
+    if ($actif == 'on')
+    {
+        $_SESSION['actif'] = 'checked';
     }
     else
     {
-        
+        $_SESSION['actif'] = 'unchecked';
     }
+    $_SESSION['titreMenu'] = $titre;
+    $_SESSION['commentaire'] = $commentaire;
+
 
     return redirect('/ajouterMenu');
 });
 
-$app->get('/ChangerTitre', function() use($app)
+$app->get('/donneeMenu', function() use($app)
 {
     session_start();
-    unset($_SESSION['titreMenu']);
 
-    return redirect('/ajouterMenu');
+    if(!isset($_SESSION['titreMenu']))
+    {
+        $_SESSION['titreMenu'] = '';
+        $_SESSION['commentaire'] = '';
+        $_SESSION['actif'] = 'unchecked';
+    }
+    
+    return view('donneeMenu');
+});
+
+$app->get('/sauvegarderMenu', function() use($app)
+{
+    session_start();
+
+    $connexion = obtenirConnexion();
+    
+    if ($_SESSION['actif'] == 'checked')
+    {
+        $actif = '1';
+    }
+    else
+    {
+        $actif = '0';
+    }
+    $requete = $connexion->prepare(
+        'INSERT INTO menus ' .
+        '(idMenu, titreMenu, actif, commentaires, idResto) ' .
+        'VALUES(5, :titre, :actif, :commentaires, :id) ');
+
+    $requete->execute(['titre' => $_SESSION['titreMenu'], 'actif' => $actif, 'commentaires' => $_SESSION['commentaire'], 'id' => $_SESSION['resto']]);
+    $requete->closeCursor();
+    
+    $requete = $connexion->prepare(
+        'SELECT idMenu FROM menus ' .
+        'WHERE titreMenu = :titre AND idResto = :id ');
+
+    $requete->execute(['titre' => $_SESSION['titreMenu'], 'id' => $_SESSION['resto']]);
+    $idMenu = $requete->fetch();
+    $requete->closeCursor();
+
+    $requete = $connexion->prepare(
+        'INSERT INTO menu_produits ' .
+        '(idMenu, idProduit) ' .
+        'VALUES(:idMenu, :idProduit) ');
+
+    foreach ($_SESSION['itemsMenu'] as $unItem) 
+    {
+        $requete->execute(['idMenu' => $idMenu['idMenu'], 'idProduit' => $unItem['idProduit']]);    
+    }
+
+    $requete->closeCursor();   
+    $connexion = null;
+
+    unset($_SESSION['titreMenu']);
+    unset($_SESSION['actif']);
+    unset($_SESSION['commentaire']);
+    unset($_SESSION['resto']);
+    unset($_SESSION['itemsMenu']);
+
+    return redirect('/');
 });
 
 $app->get('/infoItem/{selected}', function($selected) use($app)
 {
+    session_start();
+
+    foreach ($_SESSION['items'] as $produit) {
+        if ($produit['idProduit'] == $selected)
+        {
+            $item = $produit;
+        }
+    }
     
+    return view('/infoItem',
+                ['item' => $item]);
 });

@@ -1,6 +1,7 @@
 @extends('layouts.app')
 
 @section('contenu')
+</br></br>
       <h1 class="text-center"><strong>Ajouter Menu</strong></h1>
 
       <div>Succursale choisie :  
@@ -11,17 +12,10 @@
   @endforeach
         <a href="/restaurants/{{ $_SESSION['resto'] }}" class="btn btn-success">Autre succursale</a>
       </div></br>
-  @if (!isset($_SESSION['titreMenu']))  
-      <div>
-        <form method="POST" action="/titreMenu">Entrer le titre de menu   
-          <input type="text" id="titreMenu" name="titreMenu">
-          <button type="submit" class="btn btn-success">Ajouter</button>
-        </form>
-      </div></br>
-  @else
+  
       <div>
         Titre choisie : <strong>{{ $_SESSION['titreMenu'] }}</strong>
-        <a class="btn btn-success" href="/ChangerTitre">Autre titre</a>
+        <a class="btn btn-success" href="/donneeMenu">Changer données de base</a>
       </div></br>
 
 
@@ -81,7 +75,8 @@
     @else
               <tr>
     @endif
-                <td><a href="/selectionnerItemMenu/{{ $item['idProduit'] }}">{{ $item['nomProd'] }} </a> </td>
+                <td><a href="/selectionnerItemMenu/{{ $item['idProduit'] }}">{{ $item['nomProd'] }} </a> 
+                <a href="/infoItem/{{ $item['idProduit'] }}" class="btn btn-info rounded-circle float-right" >i</a></td>
                 <td class="text-center">{{ $item['prixProd'] }}</td>
               </tr>
   @endforeach
@@ -93,9 +88,9 @@
         <a href="/" class="btn btn-success">Ajouter</a>
         <a href="/" class="btn btn-success">Modifier</a>
         <a href="/" class="btn btn-success">Désactiver</a>
-        <a href="/" class="btn btn-success float-right">Sauvegarder</a>
+        <a href="/sauvegarderMenu" class="btn btn-success float-right">Sauvegarder</a>
       </div></br>
-  @endif
+
       <div class="text-right">
         <a href="/retourner" class="btn btn-success">Retourner</a>
         <a href="/deconnecter" class="btn btn-success">Déconnecter</a>
