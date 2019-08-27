@@ -56,6 +56,9 @@
     @endforeach
     </tbody>
 	</table>
+	<form method="POST" action="/accepterCommande">
+		<button type="submit" class="btn btn-large btn-success">Accepter</button>
+	</form>
 	@endif
   
 	@if(ISSET($historique))
