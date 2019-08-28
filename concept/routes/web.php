@@ -108,11 +108,21 @@ $app->get('/gestioncommandes/{idCommande}', function ($idCommande) use ($app) {
     $connexion = null;
 	return view('gestioncommandes', ['id' => $idCommande, 'commandes' => $commandes, 'details' => $details, 'historique' => $historique]);
 });
+
 $app->post('/accepterCommande', function() use($app){
 	session_start();
 	$idCommande = $_SESSION['commandeAAccepter'];
+
+    $connexion = obtenirConnexion();
+    $requete = $connexion->prepare(
+        'UPDATE commandes SET idetat = 1 '.
+		'WHERE idCommande = :idCommande');
+    $requete->execute(['idCommande' => $idCommande]);
+    $connexion = null;
+	
 	return redirect('/gestioncommandes');
 });
+
 $app->get('/ajouterMenu', function() use($app)
 {
     session_start();
