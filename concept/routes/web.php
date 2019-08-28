@@ -50,6 +50,14 @@ $app->get('/connexion', function () use ($app) {
 });
 
 $app->get('/gestioncommandes', function () use ($app) {
+	session_start();
+	
+	$_SESSION['commandeAAccepter'] = null;
+	
+	if(!isset($_SESSION['utilisateur']) || $_SESSION['utilisateur']['notpCompte'] != 2){
+		//return view('erreur');
+	}
+	
 	$connexion = obtenirConnexion();
     $requete = $connexion->query(
         'SELECT commandes.idCommande AS idCommande, CONCAT(comptes.prenom, " ", comptes.nom) ' .
@@ -65,6 +73,9 @@ $app->get('/gestioncommandes', function () use ($app) {
 
 $app->get('/gestioncommandes/{idCommande}', function ($idCommande) use ($app) {
 	session_start();
+	
+	$_SESSION['commandeAAccepter'] = $idCommande;
+	
 	$connexion = obtenirConnexion();
     $requete = $connexion->query(
         'SELECT commandes.idCommande AS idCommande, CONCAT(comptes.prenom, " ", comptes.nom) ' .
@@ -72,30 +83,36 @@ $app->get('/gestioncommandes/{idCommande}', function ($idCommande) use ($app) {
         'FROM commandes INNER JOIN comptes ' .
 		'ON commandes.noClient = comptes.noCompte ' .
         'WHERE idetat = 3');
+
     $commandes = $requete->fetchAll();
     $requete->closeCursor();
 	
-	$connexion = obtenirConnexion();
 	$requete2 = $connexion->query(
 		'SELECT datecommande, commentaires ' .
 		'FROM commandes ' .
 		'WHERE noClient = (SELECT noClient FROM commandes WHERE idCommande = '. $idCommande.')'
 	);
+
 	$historique = $requete2->fetchAll();
 	$requete2->closeCursor();
 	
-	$connexion = obtenirConnexion();
 	$requete3 = $connexion->query(
-		'SELECT noProduit, qte ' .
-		'FROM items_commande ' .
+		'SELECT produits.nomProd AS noProduit, items_commande.qte AS qte ' .
+		'FROM items_commande INNER JOIN produits ' .
+		'ON items_commande.noProduit = produits.idProduit ' .
 		'WHERE noCommande = '. $idCommande
 	);
+
 	$details = $requete3->fetchAll();
 	$requete3->closeCursor();
     $connexion = null;
 	return view('gestioncommandes', ['id' => $idCommande, 'commandes' => $commandes, 'details' => $details, 'historique' => $historique]);
 });
-
+$app->post('/accepterCommande', function() use($app){
+	session_start();
+	$idCommande = $_SESSION['commandeAAccepter'];
+	return redirect('/gestioncommandes');
+});
 $app->get('/ajouterMenu', function() use($app)
 {
     session_start();
