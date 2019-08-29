@@ -4,7 +4,7 @@ body {
 		background-color: lightgrey;
     }
 i { margin-right: 10px; }
-.navbar h1 { color: red;  }
+.navbar h4 { color: red;  }
 .span1, .span2, .span3, .span4, .span5, .span6, 
 .span7, .span8, .span9, .span10,.span11,.span12 { background-color: #ddd; border-radius: 5px; }
 .masquer { display: none; }

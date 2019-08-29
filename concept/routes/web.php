@@ -111,6 +111,9 @@ $app->get('/gestioncommandes/{idCommande}', function ($idCommande) use ($app) {
 
 $app->post('/accepterCommande', function() use($app){
 	session_start();
+	if(!isset($_SESSION['commandeAAccepter'])){
+		return view('erreur');
+	}
 	$idCommande = $_SESSION['commandeAAccepter'];
 
     $connexion = obtenirConnexion();
