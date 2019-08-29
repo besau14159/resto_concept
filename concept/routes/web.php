@@ -45,8 +45,41 @@ $app->get('/', function () use ($app) {
     return view('accueil');
 });
 
-$app->get('/connexion', function () use ($app) {
-	return view('accueil');
+$app->get('/connexion', function() use($app)
+{
+    session_start();
+    return view('/connexion');
+});
+
+$app->post('/authentifier', function() use($app)
+{
+    session_start();
+    $id = $app->request->input('courriel');
+    $mdp = $app->request->input('motdepasse');
+    $rediriger = 'echecauth';
+    if (!(($id == null) || ($mdp == null))) {
+        $connexion = obtenirConnexion();
+        $requete = $connexion->prepare(
+            'SELECT courriel,motpasse,CONCAT(comptes.prenom, " ", comptes.nom) AS nom '.
+            'FROM comptes ' .
+            'WHERE courriel = :id');
+        $requete->execute(['id' => $id]);
+        $resultat = $requete->fetch();
+        $requete->closeCursor();
+        $connexion = null;
+        if (($resultat['courriel'] == $id) && ($resultat['motpasse'] == $mdp)) {
+            $rediriger = 'succesauth';
+            $_SESSION['utilisateur'] = $resultat;
+        }
+    }
+    
+    return view('/commande');
+});
+
+$app->get('/deconnecter', function() use($app) {
+    session_start();
+    session_destroy();
+    return redirect('/');
 });
 
 $app->get('/gestioncommandes', function () use ($app) {
@@ -422,16 +455,7 @@ $app->get('/infoItem/{selected}', function($selected) use($app)
                 ['item' => $item]);
 });
 
-$app->get('/connexion', function() use($app)
-{
-    session_start();
-    return view('/connexion');
-});
 
-/*$->post('/connexion/{user}', function($user) use($app)
-{
-
-});
 /*
 |--------------------------------------------------------------------------
 | Commande Routes Debut
