@@ -12,10 +12,10 @@
 			<div class="col-7" style = "border:1px solid white">
 				<div class="input-group mb-3">
 				  <select class="custom-select" id="inputGroupSelect01">
-				    <option selected>Choisissez une succursale...</option>
-				    <option value="1">One</option>
-				    <option value="2">Two</option>
-				    <option value="3">Three</option>
+				    <option selected>Choisissez un restaurant...</option>
+				    @foreach($_SESSION['restaurants'] as $unRestaurant)
+				    <option value="{{ $unRestaurant['idResto'] }}">{{ $unRestaurant['nomResto'] }}</option>
+				    @endforeach
 				  </select>
 				</div>
 			</div>
@@ -31,15 +31,9 @@
 
 			<div class="col-2" style = "border:1px solid white">
 				<div class="list-group">
-  				  <a href="#" class="list-group-item list-group-item-action">A simple</a>
-				  <a href="#" class="list-group-item list-group-item-action">A simple</a>
-				  <a href="#" class="list-group-item list-group-item-action">A simple</a>
-				  <a href="#" class="list-group-item list-group-item-action">A simple</a>
-				  <a href="#" class="list-group-item list-group-item-action">A simple</a>
-				  <a href="#" class="list-group-item list-group-item-action">A simple</a>
-				  <a href="#" class="list-group-item list-group-item-action">A simple</a>
-				  <a href="#" class="list-group-item list-group-item-action">A simple</a>
-				  <a href="#" class="list-group-item list-group-item-action">A simple</a>
+					@foreach($_SESSION['categories'] as $unCategorie)
+  				  	<a href="#" class="list-group-item list-group-item-action">{{ $unCategorie['nomCategorie'] }}</a>
+  				  	@endforeach
 				</div>
 			</div>
 			<div class="col-7" style = "border:1px solid white">

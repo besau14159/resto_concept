@@ -432,7 +432,35 @@ $app->get('/infoItem/{selected}', function($selected) use($app)
 $app->get('/commande', function () use ($app) {
     session_start();
     session_destroy();
-    return view('commande');
+    session_start();
+
+    if(!isset($_SESSION['restaurants']))
+    {
+        $connexion = obtenirConnexion();
+        $requete = $connexion->query(
+        'SELECT * FROM restaurants');
+        $restaurants = $requete->fetchAll();
+        $requete->closeCursor();
+        $connexion = null;
+
+        $_SESSION['restaurants'] = $restaurants;
+    }
+    
+    if(!isset($_SESSION['categories']))
+    {
+        $connexion = obtenirConnexion();
+        $requete = $connexion->query(
+        'SELECT * FROM categories');
+        $categories = $requete->fetchAll();
+        $requete->closeCursor();
+        $connexion = null;
+
+        $_SESSION['categories'] = $categories;
+    }
+
+    return view('/commande',
+                    ['restaurants' => $restaurants,
+                     'categories' => $categories]);
 });
 
 /*
