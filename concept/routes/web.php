@@ -51,6 +51,7 @@ $app->get('/connexion', function () use ($app) {
 
 $app->get('/gestioncommandes', function () use ($app) {
 	session_start();
+	$etatEnAttente = 1;
 	
 	$_SESSION['commandeAAccepter'] = null;
 	
@@ -59,12 +60,13 @@ $app->get('/gestioncommandes', function () use ($app) {
 	}
 	
 	$connexion = obtenirConnexion();
-    $requete = $connexion->query(
+    $requete = $connexion->prepare(
         'SELECT commandes.idCommande AS idCommande, CONCAT(comptes.prenom, " ", comptes.nom) ' .
 		'AS nom, comptes.telephone AS telephone ' .
         'FROM commandes INNER JOIN comptes ' .
 		'ON commandes.noClient = comptes.noCompte ' .
-        'WHERE idetat = 3');
+        'WHERE idetat = :idEtat');
+	$requete->execute(['idEtat' => $etatEnAttente]);
     $commandes = $requete->fetchAll();
     $requete->closeCursor();
     $connexion = null;
@@ -73,26 +75,26 @@ $app->get('/gestioncommandes', function () use ($app) {
 
 $app->get('/gestioncommandes/{idCommande}', function ($idCommande) use ($app) {
 	session_start();
-	
+	$etatEnAttente = 1;
 	$_SESSION['commandeAAccepter'] = $idCommande;
 	
 	$connexion = obtenirConnexion();
-    $requete = $connexion->query(
+    $requete = $connexion->prepare(
         'SELECT commandes.idCommande AS idCommande, CONCAT(comptes.prenom, " ", comptes.nom) ' .
 		'AS nom, comptes.telephone AS telephone ' .
         'FROM commandes INNER JOIN comptes ' .
 		'ON commandes.noClient = comptes.noCompte ' .
-        'WHERE idetat = 3');
-
+        'WHERE idetat = :idEtat');
+	$requete->execute(['idEtat' => $etatEnAttente]);
     $commandes = $requete->fetchAll();
     $requete->closeCursor();
 	
-	$requete2 = $connexion->query(
+	$requete2 = $connexion->prepare(
 		'SELECT datecommande, commentaires ' .
 		'FROM commandes ' .
-		'WHERE noClient = (SELECT noClient FROM commandes WHERE idCommande = '. $idCommande.')'
+		'WHERE noClient = (SELECT noClient FROM commandes WHERE idCommande = :idCommande)'
 	);
-
+	$requete2->execute(['idCommande' => $idCommande]);
 	$historique = $requete2->fetchAll();
 	$requete2->closeCursor();
 	
