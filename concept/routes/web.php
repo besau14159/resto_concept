@@ -422,6 +422,16 @@ $app->get('/infoItem/{selected}', function($selected) use($app)
                 ['item' => $item]);
 });
 
+$app->get('/connexion', function() use($app)
+{
+    session_start();
+    return view('/connexion');
+});
+
+/*$->post('/connexion/{user}', function($user) use($app)
+{
+
+});
 /*
 |--------------------------------------------------------------------------
 | Commande Routes Debut
