@@ -5,7 +5,7 @@
 		<div class="row justify-content-center">
 			<div class="col">
 				<h1 class="text-center">Veuillez vous authentifier</h1>
-        <form action="/connexion" method="POST">
+        <form action="/authentifier" method="POST">
           <div class="row justify-content-center">
             <label>Adresse courriel</label>
             <input type="text" id="courriel" name="courriel">
