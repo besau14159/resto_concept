@@ -48,6 +48,10 @@ $app->get('/', function () use ($app) {
 $app->get('/connexion', function() use($app)
 {
     session_start();
+    if (!isset($_SESSION['message'])) {
+        $_SESSION['message'] = '';
+    }
+    
     return view('/connexion');
 });
 
@@ -68,12 +72,20 @@ $app->post('/authentifier', function() use($app)
         $requete->closeCursor();
         $connexion = null;
         if (($resultat['courriel'] == $id) && ($resultat['motpasse'] == $mdp)) {
-            $rediriger = 'succesauth';
+            $rediriger = '/commande';
             $_SESSION['utilisateur'] = $resultat;
         }
     }
     
-    return view('/commande');
+    return redirect($rediriger);
+});
+
+$app->get('/echecauth', function() use($app) {
+    session_start();
+    session_destroy();
+    session_start();
+    $_SESSION['message'] = 'Votre authentification a échoué';
+    return redirect('/connexion');
 });
 
 $app->get('/deconnecter', function() use($app) {
@@ -469,8 +481,6 @@ $app->get('/infoItem/{selected}', function($selected) use($app)
 */
 
 $app->get('/commande', function () use ($app) {
-    session_start();
-    session_destroy();
     session_start();
 
     if(!isset($_SESSION['restaurants']))
