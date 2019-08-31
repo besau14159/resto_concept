@@ -472,11 +472,18 @@ $app->get('/infoItem/{selected}', function($selected) use($app)
                 ['item' => $item]);
 });
 
-
 /*
 |--------------------------------------------------------------------------
 | Commande Routes Debut
 |--------------------------------------------------------------------------
+
+<?php var_dump($_SESSION['restaurants']); ?>
+
+@if (isset($_SESSION['selectedCat']))
+                    <?php
+                    var_dump($_SESSION['selectedCat']); 
+                    ?>
+@endif
 
 */
 
@@ -507,6 +514,18 @@ $app->get('/commande', function () use ($app) {
         $_SESSION['categories'] = $categories;
     }
 
+    if(!isset($_SESSION['modespaiement']))
+    {
+        $connexion = obtenirConnexion();
+        $requete = $connexion->query(
+        'SELECT * FROM modespaiement');
+        $modespaiement = $requete->fetchAll();
+        $requete->closeCursor();
+        $connexion = null;
+
+        $_SESSION['modespaiement'] = $modespaiement;
+    }
+
     return view('/commande');
 });
 
@@ -520,13 +539,12 @@ $app->get('/commande/{selected}', function ($selected) use ($app) {
     'FROM produits ' .
     'WHERE idCategorie = :selected');
     $requete->execute(['selected' => $selected]);
-    $selectedCat = $requete->fetchAll();
+    $produitsParCat = $requete->fetchAll();
     $requete->closeCursor();
     $connexion = null;
 
-    $_SESSION['selectedCat'] = $selectedCat;
+    $_SESSION['produitsParCat'] = $produitsParCat;
     
-
     return view('/commande');
 });
 

@@ -39,18 +39,25 @@
 			</div>
 
 			<div class="col-7" style = "border:1px solid white">
-				<?php
-				var_dump($_SESSION['restaurants']); 
-				?>
+				@if (isset($_SESSION['produitsParCat']))
+                    @foreach($_SESSION['produitsParCat'] as $unProduit)
+                    	<div class="row">
+		                    <div class="col" style = "border:1px solid white">
+								<a href="#" >{{ $unProduit['nomProd'] }}</a>
+								<p>Prix:{{ $unProduit['prixProd'] }}$</p>
+							</div>
+							<div class="col" style = "border:1px solid white">
+								<p>{{ $unProduit['descProd'] }}</p>
+							</div>
+							<div class="col" style = "border:1px solid white">
+								<img src="../{{ $unProduit['imgProd'] }} " width="100" height="100"s>
+							</div>
+						</div>	
+  				  	@endforeach
+				@endif
 			</div>
 
 			<div class="col-3" style = "border:1px solid white">
-				
-				@if (isset($_SESSION['selectedCat']))
-					<?php
-					var_dump($_SESSION['selectedCat']); 
-					?>
-				@endif
 
 				<div class="row">
       				<div class="col-12 text-center" style = "border:1px solid white">Adresse de livraisson</div>
@@ -69,8 +76,9 @@
 	      				<div class="input-group mb-3">
 						  <select class="custom-select" id="inputGroupSelect02">
 						    <option selected>Choisissez un type de paiement...</option>
-						    <option value="1">Credit</option>
-						    <option value="2">Comptant</option>
+						    @foreach($_SESSION['modespaiement'] as $unPaiement)
+						    <option value="{{ $unPaiement['idMode'] }}">{{ $unPaiement['description'] }}</option>
+						    @endforeach
 						  </select>
 						</div>
 					</div>	
