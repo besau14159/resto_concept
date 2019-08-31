@@ -102,7 +102,7 @@ $app->get('/ajouterMenu', function() use($app)
 
     if(!isset($_SESSION['resto']))
     {
-        return redirect('/restaurants/{selected}');
+        return redirect('/restaurants/0');
     }
 
     if(!isset($_SESSION['titreMenu']))
@@ -141,6 +141,12 @@ $app->get('/selectionnerItemListe/{selected}', function($selected) use($app)
     if ($selected != '%7Bselected%7D')
     {
         $_SESSION['itemAAjouter'] = $selected;
+
+    }
+
+    if(isset($_SESSION['message']))
+    {
+        unset($_SESSION['message']);
     }
 
     return redirect('/ajouterMenu');
@@ -220,70 +226,124 @@ $app->get('/restaurants/{selected}', function($selected) use($app)
 {
     session_start();
 
-    if ($selected != '%7Bselected%7D')
-    {
-        $_SESSION['resto'] = $selected;
-    }
-
     if(!isset($_SESSION['restaurants']))
     {
         $connexion = obtenirConnexion();
         $requete = $connexion->query(
-        'SELECT * FROM restaurants');
+        'SELECT idResto,nomResto,CONCAT(noCvq," rue ",Rue,", ",ville,", ",codePostal) as adresse, telephone ' .
+    	'FROM restaurants INNER JOIN adresses ' .
+    	'ON restaurants.idAdrs = adresses.idAdrs ');
         $restaurants = $requete->fetchAll();
         $requete->closeCursor();
         $connexion = null;
 
         $_SESSION['restaurants'] = $restaurants;
     }
-    
 
-    return view('/restaurants',
-                ['selected' => $selected]);
+    $_SESSION['selected'] = $selected;  
+    
+    if($selected != 0)
+    {
+    	unset($_SESSION['message']);
+    }
+
+    return redirect('/restaurants');
+});
+
+$app->get('/restaurants', function() use($app)
+{
+	session_start();
+
+	return view('/restaurants');
 });
 
 $app->post('/recherche', function() use($app){
-    $chaine = $app->request->input('recherche');    
+	session_start();
+	$chaine = $app->request->input('recherche');
+	$selected = 0;
+	
+	if ($chaine != '')
+	{
+		foreach ($_SESSION['restaurants'] as $resto) 
+		{
+	    	if((strpos(strtolower($resto['adresse']), strtolower($chaine)) !== FALSE) or 
+	    		(strpos(strtolower($resto['nomResto']), strtolower($chaine)) !== FALSE))
+	    	{
+	    		$selected = $resto['idResto'];
+	    	}
+		} 
+	}
+	
+    return redirect('/restaurants/' . $selected);
+});
 
-    if ($chaine != '')
+$app->get('/restaurant/{action}', function($action) use($app)
+{
+    session_start();
+
+    if(($_SESSION['selected'] == 0) AND ($action != 'ajouter'))
     {
-        $connexion = obtenirConnexion();
-        $requete = $connexion->prepare(
-            'SELECT idresto FROM restaurants
-            WHERE LOCATE(:chaine,nomresto) > 0 ');
-        $requete->execute(['chaine' => $chaine]);
-        $selected = $requete->fetch();
-        $requete->closeCursor();
-        $connexion = null;
+    	$_SESSION['message'] = 'Vous devez choisir un restaurant !';
+
+    	return view('/restaurants');
     }
-    else
+    else if($action == 'selectionner')
     {
-        $selected['idresto'] = 0;
+    	$_SESSION['resto'] = $_SESSION['selected'];
+
+        return redirect('/ajouterMenu');
+    }
+    else if(($action == 'desactiver') OR ($action == 'modifier') OR ($action == 'ajouter'))
+    {
+    	$message = 'Formulaire pour '.$action.' un restaurant';
+
+        return view('/formrestaurant',
+    				['message' => $message]);
     }
 
-    return redirect('/restaurants/' . $selected['idresto']);
+
+    return redirect('/restaurants');
+});
+
+$app->get('/item/{action}', function($action) use($app)
+{
+    session_start();
+
+    if(($_SESSION['itemAAjouter'] == 0) AND ($action != 'ajouter'))
+    {
+        $_SESSION['message'] = 'Vous devez choisir un item !';
+
+        return view('/ajouterMenu');
+    }
+    else 
+    {
+        $message = 'Formulaire pour '.$action.' un item';
+
+        return view('/message',
+                    ['message' => $message]);
+    }
+
+
+    return redirect('/restaurants');
 });
 
 $app->post('/rechercheItem', function() use($app){
+	session_start();
     $chaine = $app->request->input('recherche');    
-    $selected = null;
+    $selected = 0;
 
     if ($chaine != '')
     {
-        $connexion = obtenirConnexion();
-        $requete = $connexion->prepare(
-            'SELECT idproduit FROM produits
-            WHERE LOCATE(:chaine,nomProd) > 0 ');
-        $requete->execute(['chaine' => $chaine]);
-        $selected = $requete->fetch();
-        $requete->closeCursor();
-        $connexion = null;
+    	foreach ($_SESSION['items'] as $item) 
+		{
+	    	if(strpos(strtolower($item['nomProd']), strtolower($chaine)) !== FALSE)
+	    	{
+	    		$selected = $item['idProduit'];
+	    	}
+		} 
     }
-    
-    if ($selected == null)
-        $selected['idproduit'] = 0;
-    
-    return redirect('/selectionnerItemListe/' . $selected['idproduit']);
+
+    return redirect('/selectionnerItemListe/' . $selected);
 });
 
 $app->post('/donneeMenu', function() use($app)
