@@ -468,10 +468,29 @@ $app->get('/commande', function () use ($app) {
         $_SESSION['categories'] = $categories;
     }
 
-    return view('/commande',
-                    ['restaurants' => $restaurants,
-                     'categories' => $categories]);
+    return view('/commande');
 });
+
+
+$app->get('/commande/{selected}', function ($selected) use ($app) {
+    session_start();
+
+    $connexion = obtenirConnexion();
+    $requete = $connexion->prepare(
+    'SELECT * ' .
+    'FROM produits ' .
+    'WHERE idCategorie = :selected');
+    $requete->execute(['selected' => $selected]);
+    $selectedCat = $requete->fetchAll();
+    $requete->closeCursor();
+    $connexion = null;
+
+    $_SESSION['selectedCat'] = $selectedCat;
+    
+
+    return view('/commande');
+});
+
 
 /*
 |--------------------------------------------------------------------------
