@@ -18,7 +18,9 @@
 	  @IF(!ISSET($_SESSION["utilisateur"]))
 	  <a class="btn btn-outline-success" href="connexion" type="button">Se connecter</a>
 	  @ELSE
-	  <div>Bonjour, NOM UTILISATEUR</div>
+	  <div><h4>Bonjour, {{ $_SESSION['utilisateur']['nom'] }}</h4>
+    <a class="btn btn-outline-success" href="deconnecter" type="button">Se déconnecter</a>
+    </div>
       @ENDIF
     </nav>
     <div class="container-fluid">

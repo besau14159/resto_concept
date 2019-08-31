@@ -45,12 +45,58 @@ $app->get('/', function () use ($app) {
     return view('accueil');
 });
 
-$app->get('/connexion', function () use ($app) {
-	return view('accueil');
+$app->get('/connexion', function() use($app)
+{
+    session_start();
+    if (!isset($_SESSION['message'])) {
+        $_SESSION['message'] = '';
+    }
+    
+    return view('/connexion');
+});
+
+$app->post('/authentifier', function() use($app)
+{
+    session_start();
+    $id = $app->request->input('courriel');
+    $mdp = $app->request->input('motdepasse');
+    $rediriger = 'echecauth';
+    if (!(($id == null) || ($mdp == null))) {
+        $connexion = obtenirConnexion();
+        $requete = $connexion->prepare(
+            'SELECT courriel,motpasse,CONCAT(comptes.prenom, " ", comptes.nom) AS nom '.
+            'FROM comptes ' .
+            'WHERE courriel = :id');
+        $requete->execute(['id' => $id]);
+        $resultat = $requete->fetch();
+        $requete->closeCursor();
+        $connexion = null;
+        if (($resultat['courriel'] == $id) && ($resultat['motpasse'] == $mdp)) {
+            $rediriger = '/commande';
+            $_SESSION['utilisateur'] = $resultat;
+        }
+    }
+    
+    return redirect($rediriger);
+});
+
+$app->get('/echecauth', function() use($app) {
+    session_start();
+    session_destroy();
+    session_start();
+    $_SESSION['message'] = 'Votre authentification a échoué';
+    return redirect('/connexion');
+});
+
+$app->get('/deconnecter', function() use($app) {
+    session_start();
+    session_destroy();
+    return redirect('/');
 });
 
 $app->get('/gestioncommandes', function () use ($app) {
 	session_start();
+	$etatEnAttente = 1;
 	
 	$_SESSION['commandeAAccepter'] = null;
 	
@@ -59,12 +105,13 @@ $app->get('/gestioncommandes', function () use ($app) {
 	}
 	
 	$connexion = obtenirConnexion();
-    $requete = $connexion->query(
+    $requete = $connexion->prepare(
         'SELECT commandes.idCommande AS idCommande, CONCAT(comptes.prenom, " ", comptes.nom) ' .
 		'AS nom, comptes.telephone AS telephone ' .
         'FROM commandes INNER JOIN comptes ' .
 		'ON commandes.noClient = comptes.noCompte ' .
-        'WHERE idetat = 3');
+        'WHERE idetat = :idEtat');
+	$requete->execute(['idEtat' => $etatEnAttente]);
     $commandes = $requete->fetchAll();
     $requete->closeCursor();
     $connexion = null;
@@ -73,26 +120,26 @@ $app->get('/gestioncommandes', function () use ($app) {
 
 $app->get('/gestioncommandes/{idCommande}', function ($idCommande) use ($app) {
 	session_start();
-	
+	$etatEnAttente = 1;
 	$_SESSION['commandeAAccepter'] = $idCommande;
 	
 	$connexion = obtenirConnexion();
-    $requete = $connexion->query(
+    $requete = $connexion->prepare(
         'SELECT commandes.idCommande AS idCommande, CONCAT(comptes.prenom, " ", comptes.nom) ' .
 		'AS nom, comptes.telephone AS telephone ' .
         'FROM commandes INNER JOIN comptes ' .
 		'ON commandes.noClient = comptes.noCompte ' .
-        'WHERE idetat = 3');
-
+        'WHERE idetat = :idEtat');
+	$requete->execute(['idEtat' => $etatEnAttente]);
     $commandes = $requete->fetchAll();
     $requete->closeCursor();
 	
-	$requete2 = $connexion->query(
+	$requete2 = $connexion->prepare(
 		'SELECT datecommande, commentaires ' .
 		'FROM commandes ' .
-		'WHERE noClient = (SELECT noClient FROM commandes WHERE idCommande = '. $idCommande.')'
+		'WHERE noClient = (SELECT noClient FROM commandes WHERE idCommande = :idCommande)'
 	);
-
+	$requete2->execute(['idCommande' => $idCommande]);
 	$historique = $requete2->fetchAll();
 	$requete2->closeCursor();
 	
@@ -111,6 +158,9 @@ $app->get('/gestioncommandes/{idCommande}', function ($idCommande) use ($app) {
 
 $app->post('/accepterCommande', function() use($app){
 	session_start();
+	if(!isset($_SESSION['commandeAAccepter'])){
+		return view('erreur');
+	}
 	$idCommande = $_SESSION['commandeAAccepter'];
 
     $connexion = obtenirConnexion();
@@ -422,16 +472,7 @@ $app->get('/infoItem/{selected}', function($selected) use($app)
                 ['item' => $item]);
 });
 
-$app->get('/connexion', function() use($app)
-{
-    session_start();
-    return view('/connexion');
-});
 
-/*$->post('/connexion/{user}', function($user) use($app)
-{
-
-});
 /*
 |--------------------------------------------------------------------------
 | Commande Routes Debut
@@ -440,8 +481,6 @@ $app->get('/connexion', function() use($app)
 */
 
 $app->get('/commande', function () use ($app) {
-    session_start();
-    session_destroy();
     session_start();
 
     if(!isset($_SESSION['restaurants']))
