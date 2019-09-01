@@ -10,24 +10,17 @@
 			<div class="col-2" style = "border:1px solid white">
 				<h4 class="text-center">Menu</h4>
 			</div>
+
 			<div class="col-7" style = "border:1px solid white">
-				<div class="input-group mb-3">
-				  <select class="custom-select" id="inputGroupSelect01">
-				    <option selected>Choisissez un restaurant...</option>
-				    @foreach($_SESSION['restaurants'] as $unRestaurant)
-				    <option value="{{ $unRestaurant['idResto'] }}">{{ $unRestaurant['nomResto'] }}</option>
-				    @endforeach
-				  </select>
-				</div>
+				<div class="form-group">
+				    <input type="restaurant" class="form-control" id="restaurant" aria-describedby="emailHelp" placeholder="Restaurant">
+                </div>
 			</div>
+
 			<div class="col-3" style = "border:1px solid white">
-				<div class="input-group mb-3">
-				  <select class="custom-select" id="inputGroupSelect02">
-				    <option selected>Choisissez un type de commande...</option>
-				    <option value="1">Pour Emporter</option>
-				    <option value="2">Pour Livrer</option>
-				  </select>
-				</div>
+				 <div class="form-group">
+				    <input type="typeCommande" class="form-control" id="typeCommande" aria-describedby="emailHelp" placeholder="Type Commande">
+                 </div>
 			</div>
 
 			<div class="col-2" style = "border:1px solid white">
@@ -71,18 +64,11 @@
       				<div class="col-12 text-center" style = "border:1px solid white">Total</div>
     			</div>
 
-    			<div class="row">
-    				<div class="col-12 text-center" style = "border:1px solid white">
-	      				<div class="input-group mb-3">
-						  <select class="custom-select" id="inputGroupSelect02">
-						    <option selected>Choisissez un type de paiement...</option>
-						    @foreach($_SESSION['modespaiement'] as $unPaiement)
-						    <option value="{{ $unPaiement['idMode'] }}">{{ $unPaiement['description'] }}</option>
-						    @endforeach
-						  </select>
-						</div>
-					</div>	
-    			</div>
+    			<div class="col-12" >
+					 <div class="form-group">
+					    <input type="modePaiement" class="form-control" id="modePaiement" aria-describedby="emailHelp" placeholder="Mode Paiement">
+	                 </div>
+				</div>
 
     			<div class="row">
       				<div class="col-12 text-center" style = "border:1px solid white">

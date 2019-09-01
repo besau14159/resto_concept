@@ -548,7 +548,61 @@ $app->get('/commande/{selected}', function ($selected) use ($app) {
     return view('/commande');
 });
 
+/*
+|--------------------------------------------------------------------------
+*/
 
+$app->get('/choisiRestaurant', function () use ($app) {
+    session_start();
+
+    return view('/choisiRestaurant');
+});
+
+$app->get('/choisiTypeCommande/{selected}', function ($selected) use ($app) {
+    session_start();
+
+    $_SESSION['nomRestoSel'] = $selected;
+
+    return view('/choisiTypeCommande');
+});
+
+$app->get('/adresseLivraison', function () use ($app) {
+    session_start();
+
+    $_SESSION['typeCommande'] = 'Pour Livrer';
+
+    return view('/adresseLivraison');
+});
+
+$app->get('/choisiModePaiement', function () use ($app) {
+    session_start();
+
+    if(!isset($_SESSION['typeCommande']))
+    {
+        $_SESSION['typeCommande'] = 'Pour Emporter';
+    }
+
+    return view('/choisiModePaiement');
+});
+
+$app->get('/choisiModePaiement/{selected}', function ($selected) use ($app) {
+    session_start();
+
+    $_SESSION['modePaiementSel'] = $selected;
+
+    return view('/commande');
+});
+
+$app->post('/adresseLivraisonInfo', function () use ($app) {
+    session_start();
+
+    $_SESSION['inputAddress'] = $_POST['inputAddress'];
+    $_SESSION['inputAddress2'] = $_POST['inputAddress2'];
+    $_SESSION['postalCode'] = $_POST['postalCode'];
+    $_SESSION['inputCity'] = $_POST['inputCity'];
+    
+    return view('/choisiModePaiement');
+});
 /*
 |--------------------------------------------------------------------------
 | Commande Routes Fin
