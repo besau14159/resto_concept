@@ -193,7 +193,7 @@ $app->get('/deconnecter', function() use($app) {
 
 $app->get('/gestioncommandes', function () use ($app) {
 	session_start();
-	$etatEnAttente = 3;
+	$etatEnAttente = 8;
 	
 	$_SESSION['commandeAAccepter'] = null;
 	
@@ -217,7 +217,7 @@ $app->get('/gestioncommandes', function () use ($app) {
 
 $app->get('/gestioncommandes/{idCommande}', function ($idCommande) use ($app) {
 	session_start();
-	$etatEnAttente = 3;
+	$etatEnAttente = 8;
 	$_SESSION['commandeAAccepter'] = $idCommande;
 	
 	$connexion = obtenirConnexion();
