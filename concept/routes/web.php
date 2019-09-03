@@ -132,7 +132,7 @@ $app->post('/authentifier', function() use($app)
     if (!(($id == null) || ($mdp == null))) {
         $connexion = obtenirConnexion();
         $requete = $connexion->prepare(
-            'SELECT motpasse '.
+            'SELECT motpasse,courriel '.
             'FROM comptes ' .
             'WHERE courriel = :id');
         $requete->execute(['id' => $id]);
