@@ -45,6 +45,73 @@ $app->get('/', function () use ($app) {
     return view('accueil');
 });
 
+$app->get('sinscrire', function() use($app) {
+    session_start();
+    if (!isset($_SESSION['message'])) {
+        $_SESSION['message'] = '';
+    }
+    return view('/sinscrire');
+});
+
+$app->post('validerinscription', function() use($app) {
+    
+    session_start();
+    $courriel = $app->request->input('courriel');
+    $mdp = $app->request->input('motdepasse');
+    $mdpverif = $app->request->input('motdepasseverif');
+    $nom = $app->request->input('nom');
+    $prenom = $app->request->input('prenom');
+    $nomutilisateur = $app->request->input('nomutilisateur');
+    $telephone = $app->request->input('telephone');
+    $nocivique = $app->request->input('nocivique');
+    $rue = $app->request->input('rue');
+    $ville = $app->request->input('ville');
+    $province = $app->request->input('province');
+    $codepostal = $app->request->input('codepostal');
+    $rediriger = 'echecinsc';
+    if(!(($courriel == null) || ($mdp == null) || ($mdpverif == null) || ($nom == null) || ($prenom == null) ||
+     ($nomutilisateur == null) || ($telephone == null) || ($nocivique == null) || ($rue == null) || ($ville ==null) || 
+     ($province == null) || ($codepostal == null) || ($mdp != $mdpverif))) {
+        $connexion = obtenirConnexion();
+        $requeteadresses = $connexion->prepare(
+            'INSERT INTO adresses (nocvq,rue,ville,province,codepostal,telephone) VALUES (:nocvq,:rue,:ville,:province,:codepostal,:telephone)'
+        );
+        $requeteadresses->execute(['nocvq' => $nocivique, 'rue' => $rue, 'ville' => $ville, 'province' => $province, 'codepostal' => $codepostal, 'telephone' => $telephone]);
+        $connexion = null;
+
+        $connexion = obtenirConnexion();
+        $requetenoadrs = $connexion->prepare(
+            'SELECT idadrs FROM adresses WHERE telephone = :telephone');
+        $requetenoadrs->execute(['telephone' => $telephone]);
+        $noadrs = $requetenoadrs->fetch();
+        $requetenoadrs->closeCursor();
+        $connexion = null;
+
+        $connexion = obtenirConnexion();
+        $requetecomptes = $connexion->prepare(
+            'INSERT INTO comptes (prenom,nom,telephone,courriel,nomutilisateur,motpasse,actif,noadrs,notpcmpt,commentaires) ' . 
+            'VALUES (:prenom,:nom,:telephone,:courriel,:nomutilisateur,:motdepasse,1,:noadrs,1,:commentaire)');
+        $requetecomptes->execute(['prenom' => $prenom, 'nom' => $nom, 'telephone' => $telephone, 'courriel' => $courriel, 
+            'nomutilisateur' => $nomutilisateur, 'motdepasse' => $mdp, 'noadrs' => $noadrs['idadrs'], 'commentaire' => '']);
+        $connexion = null;
+
+        $connexion = obtenirConnexion();
+        $requeteconnexion = $connexion->prepare(
+            'SELECT courriel,motpasse,CONCAT(comptes.prenom, " ", comptes.nom) AS nom '.
+            'FROM comptes ' .
+            'WHERE courriel = :courriel');
+        $requeteconnexion->execute(['courriel' => $courriel]);
+        $resultat = $requeteconnexion->fetch();
+        $requeteconnexion->closeCursor();
+        $connexion = null;
+
+        $rediriger = '/commande';
+        $_SESSION['utilisateur'] = $resultat;
+     }
+
+     return redirect($rediriger);
+});
+
 $app->get('/connexion', function() use($app)
 {
     session_start();
@@ -58,6 +125,7 @@ $app->get('/connexion', function() use($app)
 $app->post('/authentifier', function() use($app)
 {
     session_start();
+    $_SESSION['message'] = null;
     $id = $app->request->input('courriel');
     $mdp = $app->request->input('motdepasse');
     $rediriger = 'echecauth';
@@ -86,6 +154,14 @@ $app->get('/echecauth', function() use($app) {
     session_start();
     $_SESSION['message'] = 'Votre authentification a échoué';
     return redirect('/connexion');
+});
+
+$app->get('echecinsc', function() use($app) {
+    session_start();
+    session_destroy();
+    session_start();
+    $_SESSION['message'] = 'Votre inscription a échoué';
+    return redirect('/sinscrire');
 });
 
 $app->get('/deconnecter', function() use($app) {
