@@ -700,7 +700,17 @@ $app->get('/choisiRestaurant', function () use ($app) {
 $app->get('/choisiRestaurant/{selected}', function ($selected) use ($app) {
     session_start();
 
-    $_SESSION['nomRestoSel'] = $selected;
+    $connexion = obtenirConnexion();
+    $requete = $connexion->prepare(
+        'SELECT nomresto ' .
+        'FROM restaurants ' .
+        'WHERE idResto = :selected');
+    $requete->execute(['selected' => $selected]);
+    $resto = $requete->fetch();
+    $requete->closeCursor();
+    $connexion = null;
+
+    $_SESSION['nomRestoSel'] = $resto['nomresto'];
 
     return view('/choisiTypeCommande');
 });
@@ -758,7 +768,17 @@ $app->get('/choisiModePaiement', function () use ($app) {
 $app->get('/choisiModePaiement/{selected}', function ($selected) use ($app) {
     session_start();
 
-    $_SESSION['modePaiementSel'] = $selected;
+    $connexion = obtenirConnexion();
+    $requete = $connexion->prepare(
+        'SELECT description ' .
+        'FROM modespaiement ' .
+        'WHERE idmode = :selected');
+    $requete->execute(['selected' => $selected]);
+    $modespaiement = $requete->fetch();
+    $requete->closeCursor();
+    $connexion = null;
+
+    $_SESSION['modePaiementSel'] = $modespaiement['description'];
 
     return view('/commande');
 });
