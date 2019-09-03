@@ -80,7 +80,13 @@
     			</div>
 
     			<div class="row">
-      				<div class="col-12 text-center" style = "border:1px solid white">Total</div>
+      				<div class="col-12 text-center" style = "border:1px solid white">Total
+      					<div class="row">
+      						<div class="col-4" style = "border:1px solid white">Total
+      					
+      						</div>
+    					</div>
+      				</div>
     			</div>
 
     			<div class="row">
