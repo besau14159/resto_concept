@@ -140,7 +140,7 @@ $app->post('/authentifier', function() use($app)
         $requete->closeCursor();
         $connexion = null;
         if (($resultat['courriel'] == $id) && ($resultat['motpasse'] == $mdp)) {
-            $rediriger = '/commande';
+            
             $connexion = obtenirConnexion();
             $requeteconnexion = $connexion->prepare(
                 'SELECT nocompte,notpcmpt,CONCAT(comptes.prenom, " ", comptes.nom) AS nom '.
@@ -150,6 +150,18 @@ $app->post('/authentifier', function() use($app)
             $resultatuser = $requeteconnexion->fetch();
             $requeteconnexion->closeCursor();
             $connexion = null;
+            if ($resultatuser['notpcmpt'] == 5) {
+                $rediriger = '/commande';
+            }
+            elseif ($resultatuser['notpcmpt'] == 1) {
+                $rediriger = '/ajouterMenu';
+            }
+            elseif ($resultatuser['notpcmpt'] == 2) {
+                $rediriger = '/gestioncommandes';
+            }
+            else {
+                $rediriger = '/';
+            }
             $_SESSION['utilisateur'] = $resultatuser;
         }
     }
@@ -165,7 +177,7 @@ $app->get('/echecauth', function() use($app) {
     return redirect('/connexion');
 });
 
-$app->get('echecinsc', function() use($app) {
+$app->get('/echecinsc', function() use($app) {
     session_start();
     session_destroy();
     session_start();
