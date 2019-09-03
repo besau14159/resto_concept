@@ -69,9 +69,28 @@ $app->post('validerinscription', function() use($app) {
     $province = $app->request->input('province');
     $codepostal = $app->request->input('codepostal');
     $rediriger = 'echecinsc';
+    
+    $connexion = obtenirConnexion();
+    $requetecourriel = $connexion->prepare(
+        'SELECT courriel FROM comptes WHERE courriel = :courriel');
+    $requetecourriel->execute(['courriel' => $courriel]);
+    $courrielbd = $requetecourriel->fetch();
+    $requetecourriel->closeCursor();
+    $connexion = null;
+
+    $connexion = obtenirConnexion();
+    $requeteuser = $connexion->prepare(
+        'SELECT nomutilisateur FROM comptes WHERE nomutilisateur = :nomutilisateur');
+    $requeteuser->execute(['nomutilisateur' => $nomutilisateur]);
+    $utilisateurbd = $requeteuser->fetch();
+    $requeteuser->closeCursor();
+    $connexion = null;
+
     if(!(($courriel == null) || ($mdp == null) || ($mdpverif == null) || ($nom == null) || ($prenom == null) ||
      ($nomutilisateur == null) || ($telephone == null) || ($nocivique == null) || ($rue == null) || ($ville ==null) || 
-     ($province == null) || ($codepostal == null) || ($mdp != $mdpverif))) {
+     ($province == null) || ($codepostal == null) || ($mdp != $mdpverif) || $courrielbd != null)) {
+        
+
         $connexion = obtenirConnexion();
         $requeteadresses = $connexion->prepare(
             'INSERT INTO adresses (nocvq,rue,ville,province,codepostal,telephone) VALUES (:nocvq,:rue,:ville,:province,:codepostal,:telephone)'
@@ -81,8 +100,8 @@ $app->post('validerinscription', function() use($app) {
 
         $connexion = obtenirConnexion();
         $requetenoadrs = $connexion->prepare(
-            'SELECT idadrs FROM adresses WHERE telephone = :telephone');
-        $requetenoadrs->execute(['telephone' => $telephone]);
+            'SELECT idadrs FROM adresses WHERE telephone = :telephone AND nocvq = :nocvq AND rue = :rue AND ville = :ville');
+        $requetenoadrs->execute(['telephone' => $telephone, 'nocvq' => $nocivique, 'ville' => $ville, 'rue' => $rue]);
         $noadrs = $requetenoadrs->fetch();
         $requetenoadrs->closeCursor();
         $connexion = null;
@@ -107,6 +126,9 @@ $app->post('validerinscription', function() use($app) {
 
         $rediriger = '/commande';
         $_SESSION['utilisateur'] = $resultat;
+     }
+     else {
+         $_SESSION['globale'] = $app->request->input();
      }
 
      return redirect($rediriger);
@@ -179,9 +201,49 @@ $app->get('/echecauth', function() use($app) {
 
 $app->get('/echecinsc', function() use($app) {
     session_start();
+    $message = '';
+    if ($_SESSION['globale']['courriel'] == null) {
+        $message = "Le champs de l'adresse courriel est vide";
+    }
+    elseif ($_SESSION['globale']['nomutilisateur'] == null) {
+        $message = "Le champs du nom de l'utilisateur est vide";
+    }
+    elseif ($_SESSION['globale']['motdepasse'] != $_SESSION['globale']['motdepasseverif']) {
+        $message = "Les mots de passe n'était pas identique";
+    }
+    elseif (($_SESSION['globale']['motdepasse'] == null) || ($_SESSION['globale']['motdepasseverif'] == null)) {
+        $message = "Un des mots de passe est vide";
+    }
+    elseif ($_SESSION['globale']['prenom'] == null) {
+        $message = "Le prenom est vide";
+    }
+    elseif ($_SESSION['globale']['nom'] == null) {
+        $message = "Le nom est vide";
+    }
+    elseif ($_SESSION['globale']['nocivique'] == null) {
+        $message = "Le numéro civique est vide";
+    }
+    elseif ($_SESSION['globale']['rue'] == null) {
+        $message = "La rue est vide";
+    }
+    elseif ($_SESSION['globale']['ville'] == null) {
+        $message = "La ville est vide";
+    }
+    elseif ($_SESSION['globale']['province'] == null) {
+        $message = "La province est vide";
+    }
+    elseif ($_SESSION['globale']['codepostal'] == null) {
+        $message = "Le code postal est vide";
+    }
+    elseif ($_SESSION['globale']['telephone'] == null) {
+        $message = "Le telephone est vide";
+    }
+    else {
+        $message = "L'inscription a échoué";
+    }
     session_destroy();
     session_start();
-    $_SESSION['message'] = 'Votre inscription a échoué';
+    $_SESSION['message'] = $message;
     return redirect('/sinscrire');
 });
 
@@ -273,6 +335,11 @@ $app->post('/accepterCommande', function() use($app){
 $app->get('/ajouterMenu', function() use($app)
 {
     session_start();
+
+    if(!isset($_SESSION['utilisateur']) || $_SESSION['utilisateur']['notpcmpt'] != 1){
+
+		return view('erreur');
+	}
 
     if(!isset($_SESSION['resto']))
     {
@@ -428,6 +495,11 @@ $app->get('/restaurants', function() use($app)
 {
 	session_start();
 
+	if(!isset($_SESSION['utilisateur']) || $_SESSION['utilisateur']['notpcmpt'] != 1){
+
+		return view('erreur');
+	}
+
 	return view('/restaurants');
 });
 
@@ -551,6 +623,11 @@ $app->post('/donneeMenu', function() use($app)
 $app->get('/donneeMenu', function() use($app)
 {
     session_start();
+
+    if(!isset($_SESSION['utilisateur']) || $_SESSION['utilisateur']['notpcmpt'] != 1){
+
+		return view('erreur');
+	}
 
     if(!isset($_SESSION['titreMenu']))
     {
@@ -712,7 +789,17 @@ $app->get('/choisiRestaurant', function () use ($app) {
 $app->get('/choisiRestaurant/{selected}', function ($selected) use ($app) {
     session_start();
 
-    $_SESSION['nomRestoSel'] = $selected;
+    $connexion = obtenirConnexion();
+    $requete = $connexion->prepare(
+        'SELECT nomresto ' .
+        'FROM restaurants ' .
+        'WHERE idResto = :selected');
+    $requete->execute(['selected' => $selected]);
+    $resto = $requete->fetch();
+    $requete->closeCursor();
+    $connexion = null;
+
+    $_SESSION['nomRestoSel'] = $resto['nomresto'];
 
     return view('/choisiTypeCommande');
 });
@@ -770,7 +857,17 @@ $app->get('/choisiModePaiement', function () use ($app) {
 $app->get('/choisiModePaiement/{selected}', function ($selected) use ($app) {
     session_start();
 
-    $_SESSION['modePaiementSel'] = $selected;
+    $connexion = obtenirConnexion();
+    $requete = $connexion->prepare(
+        'SELECT description ' .
+        'FROM modespaiement ' .
+        'WHERE idmode = :selected');
+    $requete->execute(['selected' => $selected]);
+    $modespaiement = $requete->fetch();
+    $requete->closeCursor();
+    $connexion = null;
+
+    $_SESSION['modePaiementSel'] = $modespaiement['description'];
 
     return view('/commande');
 });

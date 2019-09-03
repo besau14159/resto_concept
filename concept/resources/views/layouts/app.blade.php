@@ -15,7 +15,7 @@
 
   <body>
     <nav class="navbar navbar-dark bg-dark fixed-top">
-      <a class="navbar-brand" href="#">Concept!</a>
+      <a class="navbar-brand" href="/">Concept!</a>
       <div class="text-right">
         @IF(!ISSET($_SESSION['utilisateur']))
         

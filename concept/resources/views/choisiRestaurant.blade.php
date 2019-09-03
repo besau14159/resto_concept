@@ -15,7 +15,7 @@
 			<div class="col-12" style = "border:1px solid white">
 				<div class="list-group">
 					@foreach($_SESSION['listeRestaurants'] as $unRestaurant)
-  				  	<a href="/choisiRestaurant/{{ $unRestaurant['nomResto'] }}" class="list-group-item list-group-item-action">{{ $unRestaurant['nomResto'] }}</a>
+  				  	<a href="/choisiRestaurant/{{ $unRestaurant['idResto'] }}" class="list-group-item list-group-item-action">{{ $unRestaurant['nomResto'] }}</a>
   				  	@endforeach
 				</div>
 			</div>
