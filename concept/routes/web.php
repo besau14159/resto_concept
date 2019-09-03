@@ -565,18 +565,8 @@ $app->get('/infoItem/{selected}', function($selected) use($app)
 
 $app->get('/commande', function () use ($app) {
     session_start();
-
-    if(!isset($_SESSION['restaurants']))
-    {
-        $connexion = obtenirConnexion();
-        $requete = $connexion->query(
-        'SELECT * FROM restaurants');
-        $restaurants = $requete->fetchAll();
-        $requete->closeCursor();
-        $connexion = null;
-
-        $_SESSION['restaurants'] = $restaurants;
-    }
+    session_destroy();
+    session_start();
     
     if(!isset($_SESSION['categories']))
     {
@@ -589,22 +579,15 @@ $app->get('/commande', function () use ($app) {
 
         $_SESSION['categories'] = $categories;
     }
-
-    if(!isset($_SESSION['modespaiement']))
+    
+    if(!isset($_SESSION['listeRestaurants']))
     {
-        $connexion = obtenirConnexion();
-        $requete = $connexion->query(
-        'SELECT * FROM modespaiement');
-        $modespaiement = $requete->fetchAll();
-        $requete->closeCursor();
-        $connexion = null;
-
-        $_SESSION['modespaiement'] = $modespaiement;
+        return redirect('/choisiRestaurant');
     }
 
     return view('/commande');
-});
 
+});
 
 $app->get('/commande/{selected}', function ($selected) use ($app) {
     session_start();
@@ -624,17 +607,24 @@ $app->get('/commande/{selected}', function ($selected) use ($app) {
     return view('/commande');
 });
 
-/*
-|--------------------------------------------------------------------------
-*/
-
 $app->get('/choisiRestaurant', function () use ($app) {
     session_start();
+
+    if(!isset($_SESSION['listeRestaurants']))
+    {
+        $connexion = obtenirConnexion();
+        $requete = $connexion->query(
+        'SELECT * FROM restaurants');
+        $restaurants = $requete->fetchAll();
+        $requete->closeCursor();
+        $connexion = null;
+        $_SESSION['listeRestaurants'] = $restaurants;
+    }
 
     return view('/choisiRestaurant');
 });
 
-$app->get('/choisiTypeCommande/{selected}', function ($selected) use ($app) {
+$app->get('/choisiRestaurant/{selected}', function ($selected) use ($app) {
     session_start();
 
     $_SESSION['nomRestoSel'] = $selected;
@@ -642,24 +632,55 @@ $app->get('/choisiTypeCommande/{selected}', function ($selected) use ($app) {
     return view('/choisiTypeCommande');
 });
 
-$app->get('/adresseLivraison', function () use ($app) {
+$app->get('/choisiTypeCommande', function () use ($app) {
     session_start();
 
-    $_SESSION['typeCommande'] = 'Pour Livrer';
-
-    return view('/adresseLivraison');
+    return view('/choisiTypeCommande');
 });
+
+$app->get('/choisiTypeCommande/{selected}', function ($selected) use ($app) {
+    session_start();
+
+    $connexion = obtenirConnexion();
+    $requete = $connexion->query(
+    'SELECT * FROM modespaiement');
+    $modespaiement = $requete->fetchAll();
+    $requete->closeCursor();
+    $connexion = null;
+
+    $_SESSION['modespaiement'] = $modespaiement;
+
+    if( $selected == '%7BPourEmporter%7D') 
+    {
+        $_SESSION['typeCommande'] = 'Pour Emporter';  
+    }
+    else
+    {
+        if ($selected == '%7BPourLivrer%7D') 
+        {
+                $_SESSION['typeCommande'] = 'Pour Livrer';
+        }
+    } 
+
+    return view('/choisiModePaiement');
+});
+
 
 $app->get('/choisiModePaiement', function () use ($app) {
     session_start();
 
-    if(!isset($_SESSION['typeCommande']))
-    {
-        $_SESSION['typeCommande'] = 'Pour Emporter';
-    }
+    $connexion = obtenirConnexion();
+    $requete = $connexion->query(
+    'SELECT * FROM modespaiement');
+    $modespaiement = $requete->fetchAll();
+    $requete->closeCursor();
+    $connexion = null;
+
+    $_SESSION['modespaiement'] = $modespaiement;
 
     return view('/choisiModePaiement');
 });
+
 
 $app->get('/choisiModePaiement/{selected}', function ($selected) use ($app) {
     session_start();
@@ -669,6 +690,13 @@ $app->get('/choisiModePaiement/{selected}', function ($selected) use ($app) {
     return view('/commande');
 });
 
+
+$app->get('/adresseLivraison', function () use ($app) {
+    session_start();
+
+    return view('/adresseLivraison');
+});
+
 $app->post('/adresseLivraisonInfo', function () use ($app) {
     session_start();
 
@@ -676,9 +704,13 @@ $app->post('/adresseLivraisonInfo', function () use ($app) {
     $_SESSION['inputAddress2'] = $_POST['inputAddress2'];
     $_SESSION['postalCode'] = $_POST['postalCode'];
     $_SESSION['inputCity'] = $_POST['inputCity'];
-    
+
+
+    $_SESSION['typeCommande'] = 'Pour Livrer';
+
     return view('/choisiModePaiement');
 });
+
 /*
 |--------------------------------------------------------------------------
 | Commande Routes Fin

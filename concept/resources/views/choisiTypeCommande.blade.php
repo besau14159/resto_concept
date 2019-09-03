@@ -13,7 +13,7 @@
 			</div>
 
 			<div class="col-6" style = "border:1px solid white">
-				<a href="/choisiModePaiement" ><h4 class="text-center">Pour Emporter</h4></a>
+				<a href="/choisiTypeCommande/{PourEmporter}" ><h4 class="text-center">Pour Emporter</h4></a>
 			</div>
 
 			<div class="col-6" style = "border:1px solid white">
