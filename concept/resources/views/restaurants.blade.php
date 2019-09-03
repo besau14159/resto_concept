@@ -2,7 +2,7 @@
 
 @section('contenu')
 
-  <h1 class="text-center"><strong>Succursale</strong></h1>
+  <h1 class="text-center">Succursale</h1>
   
   <form method="POST" action="/recherche">Recherche(par nom, adresse)   
     <input type="text" id="recherche" name="recherche">
@@ -11,45 +11,49 @@
 
 
   <h2>Liste des succursales</h2>
-  <table class="table table-bordered">
+@if (isset($_SESSION['message']))
+  <div class="alert alert-danger" role="alert">
+  <h4>{{ $_SESSION['message'] }}</h4>
+  </div>
+@endif  
+
+  <table class="table table-dark  table-bordered table-hover" >
     <thead>
-      <tr bgcolor="grey">
-        <th class="col-md text-center">id</th>
-        <th class="col-md">Restaurant</th>
-        <th class="col-md ">Adresse</th>
-        <th class="col-md ">Téléphone</th>
-        <th class="col-md ">Gérant</th>
-        <th class="col-md text-center">Action</th>
+      <tr >
+        <th class="text-center">id</th>
+        <th >Restaurant</th>
+        <th >Adresse</th>
+        <th >Téléphone</th>
+        <th class="text-center">Action</th>
       </tr>
     </thead>
     <tbody>
     @foreach($_SESSION['restaurants'] as $unRestaurant)
 
-    @if($unRestaurant['idResto'] == $selected)
-      <tr bgcolor="darkgrey">
+    @if($unRestaurant['idResto'] == $_SESSION['selected'])
+      <tr bgcolor="dimgrey">
     @else
       <tr>
     @endif
         <td class="text-center">{{ $unRestaurant['idResto'] }}</td>
         <td><strong>{{ $unRestaurant['nomResto'] }}</strong></td>
-        <td>{{ $unRestaurant['idAdrs'] }}</td>
-        <td>444-444-4444</td>
-        <td>Nom, Prenom</td>
+        <td>{{ $unRestaurant['adresse'] }}</td>
+        <td>{{ $unRestaurant['telephone'] }}</td>
         <td class="text-center"><a href="/restaurants/{{ $unRestaurant['idResto'] }}" class="btn btn-success">Sélectionner</a></td>
       </tr>
     @endforeach
     </tbody>
   </table>
   <div>
-    <button class="btn btn-success" type="button">Ajouter</button>
-    <button class="btn btn-success" type="button">Modifier</button>
-    <button class="btn btn-success" type="button">Désactiver</button>
-    <a href="/ajouterMenu" class="btn btn-success">Sélectionner</a>
+    <a href="/restaurant/ajouter" class="btn btn-success">Ajouter</a>
+    <a href="/restaurant/modifier" class="btn btn-success">Modifier</a>
+    <a href="/restaurant/desactiver" class="btn btn-success">Désactiver</a>
+    <a href="/restaurant/selectionner" class="btn btn-success">Sélectionner</a>
   </div>
   <br>
   <div class="text-right">
-    <button class="btn btn-success" type="button">Retourner</button>
-    <button class="btn btn-success" type="button">Déconnecter</button>
+    <a href="/ajouterMenu" class="btn btn-success">Retourner</a>
+    <a href="/" class="btn btn-success">Déconnecter</a>
   </div>
     
 

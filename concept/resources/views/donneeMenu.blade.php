@@ -1,7 +1,6 @@
 @extends('layouts.app')
 
 @section('contenu')
-</br></br>
   <h1>Données du menu </h1>
 @if (isset($_SESSION['message']))
   <div class="alert alert-danger" role="alert">
