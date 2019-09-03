@@ -7,27 +7,29 @@
 				<h1 class="text-center">Commande en ligne</h1>
 			</div>
 
-			<div class="col-2" style = "border:1px solid white">
-				<h4 class="text-center">Menu</h4>
+			<div class="col-2 text-center" style = "border:1px solid white">Categories
+
 			</div>
 
-			<div class="col-7" style = "border:1px solid white">
+			<div class="col-7 text-center" style = "border:1px solid white">Restaurant choisi
 				<div class="form-group">
-				    <input type="restaurant" class="form-control" id="restaurant" aria-describedby="emailHelp" placeholder="Restaurant">
+				    <input type="restaurant" class="form-control" id="restaurant" aria-describedby="emailHelp" placeholder="{{ $_SESSION['nomRestoSel'] }}">
                 </div>
 			</div>
 
-			<div class="col-3" style = "border:1px solid white">
+			<div class="col-3 text-center" style = "border:1px solid white">Type de commande
 				 <div class="form-group">
-				    <input type="typeCommande" class="form-control" id="typeCommande" aria-describedby="emailHelp" placeholder="Type Commande">
+				    <input type="typeCommande" class="form-control" id="typeCommande" aria-describedby="emailHelp" placeholder="{{ $_SESSION['typeCommande'] }}">
                  </div>
 			</div>
 
-			<div class="col-2" style = "border:1px solid white">
+			<div class="col-2 text text-center" style = "border:1px solid white">
 				<div class="list-group">
-					@foreach($_SESSION['categories'] as $unCategorie)
-  				  	<a href="/commande/{{ $unCategorie['idCategorie'] }}" class="list-group-item list-group-item-action">{{ $unCategorie['nomCategorie'] }}</a>
-  				  	@endforeach
+					@if (isset($_SESSION['categories']))
+						@foreach($_SESSION['categories'] as $unCategorie)
+	  				  	<a href="/commande/{{ $unCategorie['idCategorie'] }}" class="list-group-item list-group-item-action">{{ $unCategorie['nomCategorie'] }}</a>
+	  				  	@endforeach
+	  				@endif
 				</div>
 			</div>
 
@@ -53,7 +55,24 @@
 			<div class="col-3" style = "border:1px solid white">
 
 				<div class="row">
-      				<div class="col-12 text-center" style = "border:1px solid white">Adresse de livraisson</div>
+      				<div class="col-12 text-center" style = "border:1px solid white">Adresse de livraisson
+      					@if (isset($_SESSION['inputCity']))
+      						@if ($_SESSION['typeCommande'] == 'Pour Livrer')
+	      						<div class="form-group">
+						    		<input type="modePaiement" class="form-control" id="modePaiement" aria-describedby="emailHelp" placeholder="{{ $_SESSION['inputAddress'] }}">
+		                 		</div>
+		                 		<div class="form-group">
+						    		<input type="modePaiement" class="form-control" id="modePaiement" aria-describedby="emailHelp" placeholder="{{ $_SESSION['inputAddress2'] }}">
+		                 		</div>
+		                 		<div class="form-group">
+						    		<input type="modePaiement" class="form-control" id="modePaiement" aria-describedby="emailHelp" placeholder="{{ $_SESSION['postalCode'] }}">
+		                 		</div>
+		                 		<div class="form-group">
+						    		<input type="modePaiement" class="form-control" id="modePaiement" aria-describedby="emailHelp" placeholder="{{ $_SESSION['inputCity'] }}">
+		                 		</div>
+		                 	@endif	
+	                 	@endif	
+      				</div>
     			</div>
 
     			<div class="row">
@@ -64,10 +83,12 @@
       				<div class="col-12 text-center" style = "border:1px solid white">Total</div>
     			</div>
 
-    			<div class="col-12" >
-					 <div class="form-group">
-					    <input type="modePaiement" class="form-control" id="modePaiement" aria-describedby="emailHelp" placeholder="Mode Paiement">
-	                 </div>
+    			<div class="row">
+	    			<div class="col-12 text-center" style = "border:1px solid white">Mode de paiement
+						 <div class="form-group">
+						    <input type="modePaiement" class="form-control" id="modePaiement" aria-describedby="emailHelp" placeholder="{{ $_SESSION['modePaiementSel'] }}">
+		                 </div>
+					</div>
 				</div>
 
     			<div class="row">

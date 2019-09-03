@@ -14,8 +14,8 @@
 
 			<div class="col-12" style = "border:1px solid white">
 				<div class="list-group">
-					@foreach($_SESSION['modespaiement'] as $unPaiement)
-  				  	<a href="/choisiModePaiement/{{ $unPaiement['description'] }}" class="list-group-item list-group-item-action">{{ $unPaiement['description'] }}</a>
+					@foreach($_SESSION['modespaiement'] as $unModePaiement)
+  				  	<a href="/choisiModePaiement/{{ $unModePaiement['description'] }}" class="list-group-item list-group-item-action">{{ $unModePaiement['description'] }}</a>
   				  	@endforeach
 				</div>
 			</div>
