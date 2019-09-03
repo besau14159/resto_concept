@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('contenu')
-
+    <div class="container-fluid">
       <h1 class="text-center"><strong>Ajouter Menu</strong></h1>
       <table>
         <tr>
@@ -109,5 +109,7 @@
         <a href="/retourner" class="btn btn-success">Retourner</a>
         <a href="/deconnecter" class="btn btn-success">Déconnecter</a>
       </div></br>
+
+    </div>  
 
 @endsection
