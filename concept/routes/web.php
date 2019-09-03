@@ -628,6 +628,12 @@ $app->get('/commande', function () use ($app) {
     session_destroy();
     session_start();
     
+    if (!isset($_SESSION['itemsCommande']))
+    {
+        $_SESSION['itemsCommande'] = array();
+
+    }  
+
     if(!isset($_SESSION['categories']))
     {
         $connexion = obtenirConnexion();
@@ -769,6 +775,21 @@ $app->post('/adresseLivraisonInfo', function () use ($app) {
     $_SESSION['typeCommande'] = 'Pour Livrer';
 
     return view('/choisiModePaiement');
+});
+
+$app->get('/ajouterItemCommande/{selected}', function ($selected) use ($app) {
+    session_start();
+
+    foreach ($_SESSION['produitsParCat'] as $unProduit) {
+        if ($unProduit['idProduit'] == $selected)
+        {
+            $produitAAjouter = $unProduit;
+        }
+    }
+
+    array_push($_SESSION['itemsCommande'], $produitAAjouter);
+
+    return view('/commande');
 });
 
 /*

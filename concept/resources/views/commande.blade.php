@@ -38,7 +38,7 @@
                     @foreach($_SESSION['produitsParCat'] as $unProduit)
                     	<div class="row">
 		                    <div class="col" style = "border:1px solid white">
-								<a href="#" >{{ $unProduit['nomProd'] }}</a>
+								<a href="/ajouterItemCommande/{{ $unProduit['idProduit'] }}" >{{ $unProduit['nomProd'] }}</a>
 								<p>Prix:{{ $unProduit['prixProd'] }}$</p>
 							</div>
 							<div class="col" style = "border:1px solid white">
@@ -76,16 +76,69 @@
     			</div>
 
     			<div class="row">
-      				<div class="col-12 text-center" style = "border:1px solid white">Produits commande</div>
+      				<div class="col-12 text-center" style = "border:1px solid white">Produits commande
+      					<div class="row">
+      						@php 
+      							$stotal=0 
+      						@endphp
+      						@foreach ($_SESSION['itemsCommande'] as $item)
+      							<div class="col-8" style = "border:1px solid white">{{ $item['nomProd'] }}
+      					
+      							</div>
+      							<div class="col-4 text-right" style = "border:1px solid white">{{ $item['prixProd'] }}
+      					
+      							</div>
+      							@php 
+      								$stotal=$stotal + $item['prixProd'];
+      							@endphp
+      						@endforeach
+      						@php 
+      								$tps = $stotal * 0.05;
+      								$tvq = $stotal * 0.09975;
+      								$total = $stotal + $tps + $tvq;
+      						@endphp
+    					</div>
+      				</div>
     			</div>
 
     			<div class="row">
       				<div class="col-12 text-center" style = "border:1px solid white">Total
       					<div class="row">
-      						<div class="col-4" style = "border:1px solid white">Total
+      						<div class="col-4" style = "border:1px solid white">SOUS-TOTAL
+      					
+      						</div>
+      						<div class="col-8 text-right" style = "border:1px solid white">{{ $stotal }}.00 $
       					
       						</div>
     					</div>
+
+    					<div class="row">
+      						<div class="col-4" style = "border:1px solid white">TPS
+      					
+      						</div>
+      						<div class="col-8 text-right" style = "border:1px solid white">{{ $tps }} $
+      					
+      						</div>
+    					</div>
+
+    					<div class="row">
+      						<div class="col-4" style = "border:1px solid white">TVQ
+      					
+      						</div>
+      						<div class="col-8 text-right" style = "border:1px solid white">{{ $tvq }} $
+      					
+      						</div>
+    					</div>
+
+    					<div class="row">
+      						<div class="col-4" style = "border:1px solid white">TOTAL
+      					
+      						</div>
+      						<div class="col-8 text-right" style = "border:1px solid white">{{ $total }} $
+      					
+      						</div>
+    					</div>
+
       				</div>
     			</div>
 
