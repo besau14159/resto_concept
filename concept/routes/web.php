@@ -90,14 +90,14 @@ $app->post('validerinscription', function() use($app) {
         $connexion = obtenirConnexion();
         $requetecomptes = $connexion->prepare(
             'INSERT INTO comptes (prenom,nom,telephone,courriel,nomutilisateur,motpasse,actif,noadrs,notpcmpt,commentaires) ' . 
-            'VALUES (:prenom,:nom,:telephone,:courriel,:nomutilisateur,:motdepasse,1,:noadrs,1,:commentaire)');
+            'VALUES (:prenom,:nom,:telephone,:courriel,:nomutilisateur,:motdepasse,1,:noadrs,5,:commentaire)');
         $requetecomptes->execute(['prenom' => $prenom, 'nom' => $nom, 'telephone' => $telephone, 'courriel' => $courriel, 
             'nomutilisateur' => $nomutilisateur, 'motdepasse' => $mdp, 'noadrs' => $noadrs['idadrs'], 'commentaire' => '']);
         $connexion = null;
 
         $connexion = obtenirConnexion();
         $requeteconnexion = $connexion->prepare(
-            'SELECT courriel,motpasse,CONCAT(comptes.prenom, " ", comptes.nom) AS nom '.
+            'SELECT nocompte,notpcmpt,CONCAT(comptes.prenom, " ", comptes.nom) AS nom '.
             'FROM comptes ' .
             'WHERE courriel = :courriel');
         $requeteconnexion->execute(['courriel' => $courriel]);
@@ -132,7 +132,7 @@ $app->post('/authentifier', function() use($app)
     if (!(($id == null) || ($mdp == null))) {
         $connexion = obtenirConnexion();
         $requete = $connexion->prepare(
-            'SELECT courriel,motpasse,CONCAT(comptes.prenom, " ", comptes.nom) AS nom '.
+            'SELECT motpasse '.
             'FROM comptes ' .
             'WHERE courriel = :id');
         $requete->execute(['id' => $id]);
@@ -141,7 +141,16 @@ $app->post('/authentifier', function() use($app)
         $connexion = null;
         if (($resultat['courriel'] == $id) && ($resultat['motpasse'] == $mdp)) {
             $rediriger = '/commande';
-            $_SESSION['utilisateur'] = $resultat;
+            $connexion = obtenirConnexion();
+            $requeteconnexion = $connexion->prepare(
+                'SELECT nocompte,notpcmpt,CONCAT(comptes.prenom, " ", comptes.nom) AS nom '.
+                'FROM comptes ' .
+                'WHERE courriel = :courriel');
+            $requeteconnexion->execute(['courriel' => $id]);
+            $resultatuser = $requeteconnexion->fetch();
+            $requeteconnexion->closeCursor();
+            $connexion = null;
+            $_SESSION['utilisateur'] = $resultatuser;
         }
     }
     
