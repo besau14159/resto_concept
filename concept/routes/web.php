@@ -193,11 +193,11 @@ $app->get('/deconnecter', function() use($app) {
 
 $app->get('/gestioncommandes', function () use ($app) {
 	session_start();
-	$etatEnAttente = 1;
+	$etatEnAttente = 3;
 	
 	$_SESSION['commandeAAccepter'] = null;
 	
-	if(!isset($_SESSION['utilisateur']) || $_SESSION['utilisateur']['notpCompte'] != 2){
+	if(!isset($_SESSION['utilisateur']) || $_SESSION['utilisateur']['notpcmpt'] != 2){
 		//return view('erreur');
 	}
 	
@@ -217,7 +217,7 @@ $app->get('/gestioncommandes', function () use ($app) {
 
 $app->get('/gestioncommandes/{idCommande}', function ($idCommande) use ($app) {
 	session_start();
-	$etatEnAttente = 1;
+	$etatEnAttente = 3;
 	$_SESSION['commandeAAccepter'] = $idCommande;
 	
 	$connexion = obtenirConnexion();
