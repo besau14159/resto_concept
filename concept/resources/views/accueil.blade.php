@@ -1,8 +1,8 @@
 @extends('layouts.app')
 
 @section('contenu')
-    <h1>Accueil</h1>
-    <h3>
-		Quelque chose ici
-    </h3>
+	<div class="row justify-content-center">
+		<h1 class="text-align-center">Bienvenue aux restaurants Concept!</h1>
+		<img class="img-fluid" src="../images/PoutineAccueil.jpg"></img>
+	</div>
 @endsection
