@@ -15,14 +15,17 @@
   <body>
     <nav class="navbar navbar-dark bg-dark fixed-top">
       <a class="navbar-brand" href="#">Concept!</a>
-    @IF(!ISSET($_SESSION['utilisateur']))
-    <a class="btn btn-outline-success" href="sinscrire" type="button">Inscription</a>
-	  <a class="btn btn-outline-success" href="connexion" type="button">Se connecter</a>
-	  @ELSE
-	  <div><h4>Bonjour, {{ $_SESSION['utilisateur']['nom'] }}</h4>
-    <a class="btn btn-outline-success" href="/deconnecter" type="button">Se déconnecter</a>
-    </div>
-      @ENDIF
+      <div class="text-right">
+        @IF(!ISSET($_SESSION['utilisateur']))
+        
+        <a class="btn btn-outline-success" href="sinscrire" type="button">Inscription</a>
+        <a class="btn btn-outline-success" href="connexion" type="button">Se connecter</a>
+        @ELSE
+        <div><h4>Bonjour, {{ $_SESSION['utilisateur']['nom'] }}</h4>
+        <a class="btn btn-outline-success" href="/deconnecter" type="button">Se déconnecter</a>
+        </div>
+          @ENDIF
+      </div>
     </nav>
     <div class="container-fluid">
        @yield('contenu')
