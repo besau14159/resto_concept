@@ -262,6 +262,11 @@ $app->get('/ajouterMenu', function() use($app)
 {
     session_start();
 
+    if(!isset($_SESSION['utilisateur']) || $_SESSION['utilisateur']['notpcmpt'] != 1){
+
+		return view('erreur');
+	}
+
     if(!isset($_SESSION['resto']))
     {
         return redirect('/restaurants/0');
@@ -416,6 +421,11 @@ $app->get('/restaurants', function() use($app)
 {
 	session_start();
 
+	if(!isset($_SESSION['utilisateur']) || $_SESSION['utilisateur']['notpcmpt'] != 1){
+
+		return view('erreur');
+	}
+
 	return view('/restaurants');
 });
 
@@ -539,6 +549,11 @@ $app->post('/donneeMenu', function() use($app)
 $app->get('/donneeMenu', function() use($app)
 {
     session_start();
+
+    if(!isset($_SESSION['utilisateur']) || $_SESSION['utilisateur']['notpcmpt'] != 1){
+
+		return view('erreur');
+	}
 
     if(!isset($_SESSION['titreMenu']))
     {
