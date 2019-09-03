@@ -53,7 +53,7 @@
       </div>
       <br>
       <div class="text-right">
-        <a href="/ajouterMenu" class="btn btn-success">Retourner</a>
+        <a href="/ajouterMenu" class="btn btn-success">Ajouter menu</a>
         <a href="/" class="btn btn-success">Déconnecter</a>
       </div>
     </div>
