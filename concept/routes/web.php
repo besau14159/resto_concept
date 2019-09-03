@@ -625,8 +625,6 @@ $app->get('/infoItem/{selected}', function($selected) use($app)
 
 $app->get('/commande', function () use ($app) {
     session_start();
-    session_destroy();
-    session_start();
     
     if (!isset($_SESSION['itemsCommande']))
     {
@@ -774,7 +772,7 @@ $app->post('/adresseLivraisonInfo', function () use ($app) {
 
     $_SESSION['typeCommande'] = 'Pour Livrer';
 
-    return view('/choisiModePaiement');
+    return redirect('/choisiModePaiement');
 });
 
 $app->get('/ajouterItemCommande/{selected}', function ($selected) use ($app) {
@@ -792,6 +790,12 @@ $app->get('/ajouterItemCommande/{selected}', function ($selected) use ($app) {
     return view('/commande');
 });
 
+
+$app->get('/confirmationCommande', function () use ($app) {
+    session_start();
+
+    return view('/confirmationCommande');
+});
 /*
 |--------------------------------------------------------------------------
 | Commande Routes Fin

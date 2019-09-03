@@ -7,11 +7,16 @@
 				<h1 class="text-center">Commande en ligne</h1>
 			</div>
 
-			<div class="col-2 text-center" style = "border:1px solid white">Categories
+
+      <div class="col-8" style = "border:1px solid white">
+        <h4 class="text-center">Confirmation de la commande</h4>
+      </div>
+
+			<div class="col-2 text-center" style = "border:1px solid white">Numero commande
 
 			</div>
 
-			<div class="col-7 text-center" style = "border:1px solid white">Restaurant choisi
+			<div class="col-7 text-center" style = "border:1px solid white">Restaurant 
 				<div class="form-group">
 				    <input type="restaurant" class="form-control" id="restaurant" aria-describedby="emailHelp" placeholder="{{ $_SESSION['nomRestoSel'] }}">
                 </div>
@@ -23,33 +28,8 @@
                  </div>
 			</div>
 
-			<div class="col-2 text text-center" style = "border:1px solid white">
-				<div class="list-group">
-					@if (isset($_SESSION['categories']))
-						@foreach($_SESSION['categories'] as $unCategorie)
-	  				  	<a href="/commande/{{ $unCategorie['idCategorie'] }}" class="list-group-item list-group-item-action">{{ $unCategorie['nomCategorie'] }}</a>
-	  				  	@endforeach
-	  				@endif
-				</div>
-			</div>
-
 			<div class="col-7" style = "border:1px solid white">
-				@if (isset($_SESSION['produitsParCat']))
-                    @foreach($_SESSION['produitsParCat'] as $unProduit)
-                    	<div class="row">
-		                    <div class="col" style = "border:1px solid white">
-								<a href="/ajouterItemCommande/{{ $unProduit['idProduit'] }}" >{{ $unProduit['nomProd'] }}</a>
-								<p>Prix:{{ $unProduit['prixProd'] }}$</p>
-							</div>
-							<div class="col" style = "border:1px solid white">
-								<p>{{ $unProduit['descProd'] }}</p>
-							</div>
-							<div class="col" style = "border:1px solid white">
-								<img src="../{{ $unProduit['imgProd'] }} " width="100" height="100"s>
-							</div>
-						</div>	
-  				  	@endforeach
-				@endif
+
 			</div>
 
 			<div class="col-3" style = "border:1px solid white">
@@ -76,7 +56,7 @@
     			</div>
 
     			<div class="row">
-      				<div class="col-12 text-center" style = "border:1px solid white">Produits commande
+      				<div class="col-12 text-center" style = "border:1px solid white">Résumé de votre commande
       					<div class="row">
       						@php 
       							$stotal=0 
@@ -94,8 +74,8 @@
       						@endforeach
       						@php 
       								$tps = number_format($stotal * 0.05, 2, '.', '');
-      								$tvq = number_format($stotal * 0.09975, 2, '.', '');
-      								$total = $stotal + $tps + $tvq;
+                      $tvq = number_format($stotal * 0.09975, 2, '.', '');
+                      $total = $stotal + $tps + $tvq;
       						@endphp
     					</div>
       				</div>
@@ -146,15 +126,22 @@
 	    			<div class="col-12 text-center" style = "border:1px solid white">Mode de paiement
 						 <div class="form-group">
 						    <input type="modePaiement" class="form-control" id="modePaiement" aria-describedby="emailHelp" placeholder="{{ $_SESSION['modePaiementSel'] }}">
-		                 </div>
-					</div>
+		         </div>
+					</div> 
 				</div>
 
-    			<div class="row">
-      				<div class="col-12 text-center" style = "border:1px solid white">
-      					<a href="/confirmationCommande"  class="btn btn-secondary btn-lg btn-block" role="button" aria-pressed="true">CONFIRMER></a>
-      				</div>
-    			</div>
+        <div class="row">
+          @php
+            unset($_SESSION['nomRestoSel']);
+            unset($_SESSION['typeCommande']);
+            unset($_SESSION['modePaiementSel']);
+            unset($_SESSION['itemsCommande']);
+            unset($_SESSION['listeRestaurants']);   
+          @endphp
+              <div class="col-12 text-center" style = "border:1px solid white">
+                <a href="/commande"  class="btn btn-secondary btn-lg btn-block" role="button" aria-pressed="true">NOUVELLE COMMANDE></a>
+              </div>
+        </div>
 
 			</div>
 		</div>
