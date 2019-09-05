@@ -106,7 +106,7 @@
       </div></br>
 
       <div class="text-right">
-        <a href="/retourner" class="btn btn-success">Retourner</a>
+        <a href="/ajouterMenu" class="btn btn-success">Retourner</a>
         <a href="/deconnecter" class="btn btn-success">Déconnecter</a>
       </div></br>
 
