@@ -152,7 +152,7 @@
 
     			<div class="row">
       				<div class="col-12 text-center" style = "border:1px solid white">
-      					<a href="/confirmationCommande"  class="btn btn-secondary btn-lg btn-block" role="button" aria-pressed="true">CONFIRMER></a>
+      					<a href="/confirmationCommande"  class="btn btn-secondary btn-lg btn-block" role="button" aria-pressed="true">CONFIRMER</a>
       				</div>
     			</div>
 

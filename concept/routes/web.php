@@ -724,6 +724,11 @@ $app->get('/infoItem/{selected}', function($selected) use($app)
 $app->get('/commande', function () use ($app) {
     session_start();
     
+    if(!isset($_SESSION['utilisateur'])){
+
+        return view('erreur');
+    }
+
     if (!isset($_SESSION['itemsCommande']))
     {
         $_SESSION['itemsCommande'] = array();
@@ -882,10 +887,12 @@ $app->get('/adresseLivraison', function () use ($app) {
 $app->post('/adresseLivraisonInfo', function () use ($app) {
     session_start();
 
-    $_SESSION['inputAddress'] = $_POST['inputAddress'];
-    $_SESSION['inputAddress2'] = $_POST['inputAddress2'];
-    $_SESSION['postalCode'] = $_POST['postalCode'];
-    $_SESSION['inputCity'] = $_POST['inputCity'];
+    $_SESSION['noCvq'] = $_POST['noCvq'];
+    $_SESSION['Rue'] = $_POST['Rue'];
+    $_SESSION['ville'] = $_POST['ville'];
+    $_SESSION['province'] = $_POST['province'];
+    $_SESSION['codePostal'] = $_POST['codePostal'];
+    $_SESSION['telephone'] = $_POST['telephone'];
 
 
     $_SESSION['typeCommande'] = 'Pour Livrer';
@@ -911,6 +918,39 @@ $app->get('/ajouterItemCommande/{selected}', function ($selected) use ($app) {
 
 $app->get('/confirmationCommande', function () use ($app) {
     session_start();
+
+    $connexion = obtenirConnexion();
+    
+
+
+
+
+
+
+
+    $requete = $connexion->prepare(
+        'SELECT idmode ' .
+        'FROM modespaiement ' .
+        'WHERE description = :description');
+    $requete->execute(['description' => $_SESSION['modePaiementSel']]);
+    $idmode = $requete->fetch();
+    $requete->closeCursor();
+    
+    $requete = $connexion->prepare(
+        'SELECT idresto ' .
+        'FROM restaurants ' .
+        'WHERE nomresto = :nomresto');
+    $requete->execute(['nomresto' => $_SESSION['nomRestoSel']]);
+    $idresto = $requete->fetch();
+    $requete->closeCursor();
+
+
+
+
+    $connexion = null;
+
+
+
 
     return view('/confirmationCommande');
 });
