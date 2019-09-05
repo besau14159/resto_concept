@@ -655,8 +655,8 @@ $app->get('/sauvegarderMenu', function() use($app)
     }
     $requete = $connexion->prepare(
         'INSERT INTO menus ' .
-        '(idMenu, titreMenu, actif, commentaires, idResto) ' .
-        'VALUES(5, :titre, :actif, :commentaires, :id) ');
+        '( titreMenu, actif, commentaires, idResto) ' .
+        'VALUES( :titre, :actif, :commentaires, :id) ');
 
     $requete->execute(['titre' => $_SESSION['titreMenu'], 'actif' => $actif, 'commentaires' => $_SESSION['commentaire'], 'id' => $_SESSION['resto']]);
     $requete->closeCursor();
@@ -682,13 +682,16 @@ $app->get('/sauvegarderMenu', function() use($app)
     $requete->closeCursor();   
     $connexion = null;
 
+    $message = 'Le menu ' . $_SESSION['titreMenu'] . ' a été ajouté !';
+
     unset($_SESSION['titreMenu']);
     unset($_SESSION['actif']);
     unset($_SESSION['commentaire']);
     unset($_SESSION['resto']);
     unset($_SESSION['itemsMenu']);
 
-    return redirect('/');
+    return view('/message',
+                ['message' => $message]);
 });
 
 $app->get('/infoItem/{selected}', function($selected) use($app)
