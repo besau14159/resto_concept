@@ -2,6 +2,7 @@ body {
         padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
 		margin-top: 30px;
 		background-color: lightgrey;
+		font-family: 'Lexend Zetta', sans-serif;
     }
 i { margin-right: 10px; }
 .navbar h4 { color: red;  }
@@ -9,3 +10,4 @@ i { margin-right: 10px; }
 .span7, .span8, .span9, .span10,.span11,.span12 { background-color: #ddd; border-radius: 5px; }
 .masquer { display: none; }
 .msgerreur { color: red; }
+.img-fluid{max-width: 75%;}
