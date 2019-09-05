@@ -139,7 +139,7 @@
             unset($_SESSION['listeRestaurants']);   
           @endphp
               <div class="col-12 text-center" style = "border:1px solid white">
-                <a href="/commande"  class="btn btn-secondary btn-lg btn-block" role="button" aria-pressed="true">NOUVELLE COMMANDE></a>
+                <a href="/commande"  class="btn btn-secondary btn-lg btn-block" role="button" aria-pressed="true">NOUVELLE COMMANDE</a>
               </div>
         </div>
 
