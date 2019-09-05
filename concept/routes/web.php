@@ -760,11 +760,26 @@ $app->get('/commande/{selected}', function ($selected) use ($app) {
     session_start();
 
     $connexion = obtenirConnexion();
+
+    $requete = $connexion->prepare(
+        'SELECT idresto ' .
+        'FROM restaurants ' .
+        'WHERE nomresto = :nomresto');
+    $requete->execute(['nomresto' => $_SESSION['nomRestoSel']]);
+    $idresto = $requete->fetch();
+    $requete->closeCursor();
+
+    
     $requete = $connexion->prepare(
     'SELECT * ' .
     'FROM produits ' .
-    'WHERE idCategorie = :selected');
-    $requete->execute(['selected' => $selected]);
+    'WHERE idCategorie = :selected '.
+    'AND idProduit IN (' .
+        'SELECT idProduit '.
+        'FROM menu_produits INNER JOIN '.
+        'menus ON menus.idMenu = menu_produits.idMenu '.
+        'WHERE menus.actif = 1 AND menus.idResto = :idResto)');
+    $requete->execute(['selected' => $selected, 'idResto' => $idresto['idresto']]);
     $produitsParCat = $requete->fetchAll();
     $requete->closeCursor();
     $connexion = null;
@@ -920,10 +935,22 @@ $app->get('/confirmationCommande', function () use ($app) {
     session_start();
 
     $connexion = obtenirConnexion();
-    
+    /*
+    $requete = $connexion->prepare(
+        'INSERT INTO adresses ' .
+        '(noCvq, Rue, ville, province, codePostal, telephone) ' .
+        'VALUES(:noCvq, :Rue, :ville, :province, :codePostal, :telephone) ');
 
+    $requete->execute(['noCvq' => $_SESSION['noCvq'], 'Rue' => $_SESSION['Rue'], 'ville' => $_SESSION['ville'], 'province' => 'QC', 'codePostal' => $_SESSION['codePostal'],['telephone' => $_SESSION['telephone']]);
+    $requete->closeCursor();
+    */
+    $requete = $connexion->prepare(
+        'SELECT idAdrs FROM adresses ' .
+        'WHERE telephone = :telephone AND noCvq = :noCvq ');
 
-
+    $requete->execute(['telephone' => $_SESSION['telephone'], 'noCvq' => $_SESSION['noCvq']]);
+    $idAdrs = $requete->fetch();
+    $requete->closeCursor();
 
 
 
