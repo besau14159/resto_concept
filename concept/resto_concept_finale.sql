@@ -1,29 +1,3 @@
--- phpMyAdmin SQL Dump
--- version 4.7.0
--- https://www.phpmyadmin.net/
---
--- Hôte : 127.0.0.1
--- Généré le :  sam. 16 déc. 2017 à 15:38
--- Version du serveur :  5.7.17
--- Version de PHP :  5.6.30
-
-SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-SET AUTOCOMMIT = 0;
-START TRANSACTION;
-SET time_zone = "+00:00";
-
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8mb4 */;
-
---
--- Base de données :  `resto_concept`
---
-
--- --------------------------------------------------------
-
 --
 -- Structure de la table `adresses`
 --
@@ -36,53 +10,24 @@ CREATE TABLE `adresses` (
   `province` varchar(2) DEFAULT NULL,
   `codePostal` char(7) DEFAULT NULL,
   `telephone` char(15) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
---
--- Déchargement des données de la table `adresses`
---
-
-INSERT INTO `adresses` (`noCvq`, `Rue`, `ville`, `province`, `codePostal`, `telephone`) VALUES
-('154', 'la lune', 'Quebec', 'QC', 'G1X 3T3', '418-547-1234'),
-('198', 'Mars', 'Quebec', 'QC', 'G1K 3C3', '418-524-8484'),
-('128', 'Jupiter', 'Quebec', 'QC', 'G1K 3C4', '418-524-3414'),
-('587', 'La terre', 'Quebec', 'QC', 'G2F 4T5', '418-148-1482'),
-('569', 'Le soleil', 'Quebec', 'QC', 'G1F 4T7', '418-952-3654');
-
--- --------------------------------------------------------
+);
 
 --
 -- Structure de la table `categories`
 --
 
 CREATE TABLE `categories` (
-  `idCategorie` int(11) NOT NULL PRIMARY KEY AUTO_INCREMENT,
+  `idCategorie` int(11) NOT NULL,
   `nomCategorie` varchar(100) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+);
 
---
--- Déchargement des données de la table `categories`
---
-
-INSERT INTO `categories` (`nomCategorie`) VALUES
-('Promotions'),
-('Pizza'),
-('Poutines'),
-('Hamburgers'),
-('Poulet'),
-('Pates'),
-('Salade'),
-('Desserts'),
-('Boissons');
-
--- --------------------------------------------------------
 
 --
 -- Structure de la table `commandes`
 --
- 
+
 CREATE TABLE `commandes` (
-  `idCommande` int(11) NOT NULL PRIMARY KEY AUTO_INCREMENT,
+  `idCommande` int(11) NOT NULL,
   `datecommande` datetime NOT NULL,
   `idetat` int(11) NOT NULL,
   `idModePaiement` int(11) NOT NULL,
@@ -90,30 +35,14 @@ CREATE TABLE `commandes` (
   `noAdrs` int(11) NOT NULL,
   `idMenu` int(11) NOT NULL,
   `commentaires` varchar(250) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
---
--- Déchargement des données de la table `commandes`
---
-
-INSERT INTO `commandes` (`datecommande`, `idetat`, `idModePaiement`, `noClient`, `noAdrs`, `idMenu`, `commentaires`) VALUES
-('2017-10-03 01:30:00', 8, 2, 3, 2, 1, 'Difficile'),
-('2017-11-13 11:33:18', 3, 1, 3, 2, 1, ''),
-('2017-12-11 11:30:10', 1, 2, 3, 4, 2, 'Ouf'),
-('2017-11-10 12:32:20', 8, 4, 2, 3, 1, ''),
-('2019-01-10 12:32:20', 8, 4, 2, 3, 1, ''),
-('2019-02-10 12:32:20', 8, 4, 2, 3, 1, ''),
-('2019-07-10 12:32:20', 8, 4, 2, 3, 1, ''),
-('2017-12-12 10:39:50', 4, 1, 3, 3, 3, '');
-
--- --------------------------------------------------------
+);
 
 --
 -- Structure de la table `comptes`
 --
 
 CREATE TABLE `comptes` (
-  `noCompte` int(11) NOT NULL PRIMARY KEY AUTO_INCREMENT,
+  `noCompte` int(11) NOT NULL,
   `notpCmpt` int(11) NOT NULL,
   `prenom` varchar(50) NOT NULL,
   `nom` varchar(50) NOT NULL,
@@ -124,7 +53,254 @@ CREATE TABLE `comptes` (
   `motPasse` varchar(40) NOT NULL,
   `Actif` tinyint(1) NOT NULL DEFAULT '1',
   `commentaires` varchar(250) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+);
+
+--
+-- Structure de la table `etatcommandes`
+--
+
+CREATE TABLE `etatcommandes` (
+  `idEtat` int(11) NOT NULL,
+  `Etat` varchar(35) CHARACTER SET utf8 NOT NULL
+);
+
+--
+-- Structure de la table `items_commande`
+--
+
+CREATE TABLE `items_commande` (
+  `noCommande` int(11) NOT NULL,
+  `noProduit` int(11) NOT NULL,
+  `qte` int(11) NOT NULL
+);
+
+--
+-- Structure de la table `menus`
+--
+
+CREATE TABLE `menus` (
+  `idMenu` int(11) NOT NULL,
+  `titreMenu` varchar(100) NOT NULL,
+  `actif` tinyint(1) NOT NULL DEFAULT '1',
+  `commentaires` varchar(200) NOT NULL,
+  `idResto` int(11) NOT NULL
+);
+
+--
+-- Structure de la table `menu_produits`
+--
+
+CREATE TABLE `menu_produits` (
+  `idItem` int(11) NOT NULL,
+  `idMenu` int(11) NOT NULL,
+  `idProduit` int(11) NOT NULL
+);
+
+--
+-- Structure de la table `modespaiement`
+--
+
+CREATE TABLE `modespaiement` (
+  `idMode` int(11) NOT NULL,
+  `description` varchar(100) NOT NULL
+);
+
+--
+-- Structure de la table `produits`
+--
+
+CREATE TABLE `produits` (
+  `idProduit` int(11) NOT NULL,
+  `nomProd` varchar(100) NOT NULL,
+  `descProd` varchar(500) NOT NULL,
+  `prixProd` decimal(10,0) NOT NULL,
+  `imgProd` varchar(1000) NOT NULL,
+  `idCategorie` int(11) NOT NULL
+);
+
+--
+-- Structure de la table `restaurants`
+--
+
+CREATE TABLE `restaurants` (
+  `idResto` int(11) NOT NULL,
+  `nomResto` varchar(150) NOT NULL,
+  `idAdrs` int(11) NOT NULL,
+  `Actif` tinyint(1) NOT NULL DEFAULT '1'
+);
+
+--
+-- Structure de la table `typecomptes`
+--
+
+CREATE TABLE `typecomptes` (
+  `idtype` int(11) NOT NULL,
+  `nomType` varchar(35) CHARACTER SET utf8 NOT NULL
+);
+--
+-- Index pour les tables déchargées
+--
+
+
+--
+-- Index pour la table `categories`
+--
+ALTER TABLE `categories`
+  ADD PRIMARY KEY (`idCategorie`);
+
+--
+-- Index pour la table `commandes`
+--
+ALTER TABLE `commandes`
+  ADD PRIMARY KEY (`idCommande`),
+  ADD KEY `commandes_ibfk_2` (`noClient`),
+  ADD KEY `commandes_ibfk_4` (`idetat`),
+  ADD KEY `commandes_ibfk_1` (`idModePaiement`),
+  ADD KEY `commandes_ibfk_3` (`noAdrs`),
+  ADD KEY `commandes_ibfk_5` (`idMenu`);
+
+ALTER TABLE `commandes` CHANGE `idCommande` `idCommande` INT(11) NOT NULL AUTO_INCREMENT;
+
+ALTER TABLE `commandes` CHANGE `datecommande` `datecommande` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP;
+
+ALTER TABLE `commandes` CHANGE `commentaires` `commentaires` VARCHAR(250) CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL;
+
+--
+-- Index pour la table `comptes`
+--
+ALTER TABLE `comptes`
+  ADD PRIMARY KEY (`noCompte`),
+  ADD KEY `notpCmpt` (`notpCmpt`),
+  ADD KEY `adrs_ibfk_2` (`noAdrs`);
+
+ALTER TABLE `comptes` CHANGE `noCompte` `noCompte` INT(11) NOT NULL AUTO_INCREMENT;
+--
+-- Index pour la table `etatcommandes`
+--
+ALTER TABLE `etatcommandes`
+  ADD PRIMARY KEY (`idEtat`);
+
+ALTER TABLE `etatcommandes` CHANGE `idEtat` `idEtat` INT(11) NOT NULL AUTO_INCREMENT;
+--
+-- Index pour la table `items_commande`
+--
+ALTER TABLE `items_commande`
+  ADD KEY `itemcommandes_ibfk_1` (`noCommande`),
+  ADD KEY `itemcommandes_ibfk_2` (`noProduit`);
+
+--
+-- Index pour la table `menus`
+--
+ALTER TABLE `menus`
+  ADD PRIMARY KEY (`idMenu`),
+  ADD KEY `Menus_ibfk_1` (`idResto`);
+
+ALTER TABLE `menus` CHANGE `idMenu` `idMenu` INT(11) NOT NULL AUTO_INCREMENT;
+--
+-- Index pour la table `menu_produits`
+--
+ALTER TABLE `menu_produits`
+  ADD PRIMARY KEY (`idItem`),
+  ADD KEY `menuprod_ibfk_1` (`idMenu`),
+  ADD KEY `menuprod_ibfk_2` (`idProduit`);
+
+ALTER TABLE `menu_produits` CHANGE `idItem` `idItem` INT(11) NOT NULL AUTO_INCREMENT;
+--
+-- Index pour la table `modespaiement`
+--
+ALTER TABLE `modespaiement`
+  ADD PRIMARY KEY (`idMode`);
+
+ALTER TABLE `modespaiement` CHANGE `idMode` `idMode` INT(11) NOT NULL AUTO_INCREMENT;
+--
+-- Index pour la table `produits`
+--
+ALTER TABLE `produits`
+  ADD PRIMARY KEY (`idProduit`),
+  ADD KEY `prod_ibfk_1` (`idCategorie`);
+
+ALTER TABLE `produits` CHANGE `idProduit` `idProduit` INT(11) NOT NULL AUTO_INCREMENT;
+--
+-- Index pour la table `restaurants`
+--
+ALTER TABLE `restaurants`
+  ADD PRIMARY KEY (`idResto`),
+  ADD KEY `restaurants_ibfk_1` (`idAdrs`);
+
+ALTER TABLE `restaurants` CHANGE `idResto` `idResto` INT(11) NOT NULL AUTO_INCREMENT;
+--
+-- Index pour la table `typecomptes`
+--
+ALTER TABLE `typecomptes`
+  ADD PRIMARY KEY (`idtype`);
+
+ALTER TABLE `typecomptes` CHANGE `idtype` `idtype` INT(11) NOT NULL AUTO_INCREMENT;
+--
+-- Contraintes pour les tables déchargées
+--
+
+--
+-- Contraintes pour la table `commandes`
+--
+ALTER TABLE `commandes`
+  ADD CONSTRAINT commandes_ibfk_1 FOREIGN KEY (idModePaiement) REFERENCES modespaiement(idMode),
+  ADD CONSTRAINT commandes_ibfk_2 FOREIGN KEY (noClient) REFERENCES comptes(noCompte),
+  ADD CONSTRAINT commandes_ibfk_3 FOREIGN KEY (noAdrs) REFERENCES adresses(idAdrs),
+  ADD CONSTRAINT commandes_ibfk_4 FOREIGN KEY (idetat) REFERENCES etatcommandes(idEtat),
+  ADD CONSTRAINT commandes_ibfk_5 FOREIGN KEY (idMenu) REFERENCES menus(idMenu);
+
+--
+-- Contraintes pour la table `comptes`
+--
+ALTER TABLE `comptes`
+  ADD CONSTRAINT `adrs_ibfk_2` FOREIGN KEY (`noAdrs`) REFERENCES `adresses` (`idAdrs`),
+  ADD CONSTRAINT `comptes_ibfk_1` FOREIGN KEY (`notpCmpt`) REFERENCES `typecomptes` (`idtype`);
+
+--
+-- Contraintes pour la table `produits`
+--
+ALTER TABLE `produits`
+  ADD CONSTRAINT `prod_ibfk_1` FOREIGN KEY (`idcategorie`) REFERENCES `categories` (`idCategorie`);
+COMMIT;
+
+
+
+--
+-- Déchargement des données de la table `adresses`
+--
+
+INSERT INTO `adresses` (`idAdrs`, `noCvq`, `Rue`, `ville`, `province`, `codePostal`, `telephone`) VALUES
+(1, '154', 'la lune', 'Quebec', 'QC', 'G1X 3T3', '418-547-1234'),
+(2, '198', 'Mars', 'Quebec', 'QC', 'G1K 3C3', '418-524-8484'),
+(3, '128', 'Jupiter', 'Quebec', 'QC', 'G1K 3C4', '418-524-3414'),
+(4, '587', 'La terre', 'Quebec', 'QC', 'G2F 4T5', '418-148-1482'),
+(5, '569', 'Le soleil', 'Quebec', 'QC', 'G1F 4T7', '418-952-3654');
+
+--
+-- Déchargement des données de la table `categories`
+--
+
+INSERT INTO `categories` (`idCategorie`, `nomCategorie`) VALUES
+(1, 'Promotions'),
+(2, 'Pizza'),
+(3, 'Poutines'),
+(4, 'Hamburgers'),
+(5, 'Poulet'),
+(6, 'Pates'),
+(7, 'Salade'),
+(9, 'Desserts'),
+(10, 'Boissons');
+
+--
+-- Déchargement des données de la table `commandes`
+--
+
+INSERT INTO `commandes` (`idCommande`, `datecommande`, `idetat`, `idModePaiement`, `noClient`, `noAdrs`, `idMenu`, `commentaires`) VALUES
+(1, '2017-10-03 01:30:00', 5, 2, 3, 2, 1, ''),
+(2, '2017-11-13 11:33:18', 3, 1, 3, 2, 1, ''),
+(3, '2017-12-11 11:30:10', 1, 2, 3, 4, 2, ''),
+(4, '2017-11-10 12:32:20', 3, 4, 2, 3, 1, ''),
+(5, '2017-12-12 10:39:50', 4, 1, 3, 3, 3, '');
 
 --
 -- Déchargement des données de la table `comptes`
@@ -137,43 +313,20 @@ INSERT INTO `comptes` (`noCompte`, `notpCmpt`, `prenom`, `nom`, `noAdrs`, `telep
 (4, 5, 'Marie', 'La france', 3, '418-952-5754', 'france@gmail.com', 'francemarie', '123456789', 1, ''),
 (5, 2, 'Gilles', 'Gérant', 3, '418-952-5754', 'gilles@gillesmail.com', 'gg', '123456789', 1, '');
 
--- --------------------------------------------------------
-
---
--- Structure de la table `etatcommandes`
---
-
-CREATE TABLE `etatcommandes` (
-  `idEtat` int(11) NOT NULL PRIMARY KEY AUTO_INCREMENT,
-  `Etat` varchar(35) CHARACTER SET utf8 NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
 --
 -- Déchargement des données de la table `etatcommandes`
 --
 
-INSERT INTO `etatcommandes` (`idEtat`, `Etat`) VALUES
-(0, 'Refusée'),
-(1, 'Acceptée'),
-(2, 'En préparation'),
-(3, 'Prête à livrer'),
-(4, 'En livraison'),
-(5, 'Livrée avec succès'),
-(6, 'Problème de livraison'),
-(7, 'Autre'),
-(8, 'En attente');
-
--- --------------------------------------------------------
-
---
--- Structure de la table `items_commande`
---
-
-CREATE TABLE `items_commande` (
-  `noCommande` int(11) NOT NULL,
-  `noProduit` int(11) NOT NULL,
-  `qte` int(11) NOT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+INSERT INTO `etatcommandes` (`Etat`) VALUES
+('en Validation'),
+('Refusée'),
+('Acceptée'),
+('En préparation'),
+('Prête à livrer'),
+('En livraison'),
+('Livrée avec succès'),
+('En attende'),
+('Autre');
 
 --
 -- Déchargement des données de la table `items_commande`
@@ -194,20 +347,6 @@ INSERT INTO `items_commande` (`noCommande`, `noProduit`, `qte`) VALUES
 (4, 10, 10),
 (5, 14, 1);
 
--- --------------------------------------------------------
-
---
--- Structure de la table `menus`
---
-
-CREATE TABLE `menus` (
-  `idMenu` int(11) PRIMARY KEY NOT NULL AUTO_INCREMENT,
-  `titreMenu` varchar(100) NOT NULL,
-  `actif` tinyint(1) NOT NULL DEFAULT '1',
-  `commentaires` varchar(200) NOT NULL,
-  `idResto` int(11) NOT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
-
 --
 -- Déchargement des données de la table `menus`
 --
@@ -217,18 +356,6 @@ INSERT INTO `menus` (`idMenu`, `titreMenu`, `actif`, `commentaires`, `idResto`) 
 (2, 'Menu de l\'hiver sur la lune', 0, 'n\'est pas actif', 1),
 (3, 'Menu festival', 1, '', 2),
 (4, 'Un menu santé ', 1, 'Super humm', 3);
-
--- --------------------------------------------------------
-
---
--- Structure de la table `menu_produits`
---
-
-CREATE TABLE `menu_produits` (
-  `idItem` int(11) NOT NULL PRIMARY KEY AUTO_INCREMENT,
-  `idMenu` int(11) NOT NULL,
-  `idProduit` int(11) NOT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 --
 -- Déchargement des données de la table `menu_produits`
@@ -250,17 +377,6 @@ INSERT INTO `menu_produits` (`idItem`, `idMenu`, `idProduit`) VALUES
 (13, 3, 14),
 (14, 3, 18);
 
--- --------------------------------------------------------
-
---
--- Structure de la table `modespaiement`
---
-
-CREATE TABLE `modespaiement` (
-  `idMode` int(11) NOT NULL PRIMARY KEY AUTO_INCREMENT,
-  `description` varchar(100) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
 --
 -- Déchargement des données de la table `modespaiement`
 --
@@ -271,21 +387,6 @@ INSERT INTO `modespaiement` (`idMode`, `description`) VALUES
 (3, 'Débit'),
 (4, 'Coupons'),
 (5, 'Carte cadeau');
-
--- --------------------------------------------------------
-
---
--- Structure de la table `produits`
---
-
-CREATE TABLE `produits` (
-  `idProduit` int(11) NOT NULL PRIMARY KEY AUTO_INCREMENT,
-  `nomProd` varchar(100) NOT NULL,
-  `descProd` varchar(500) NOT NULL,
-  `prixProd` decimal(10,0) NOT NULL,
-  `imgProd` varchar(1000) NOT NULL,
-  `idCategorie` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
 -- Déchargement des données de la table `produits`
@@ -305,19 +406,6 @@ INSERT INTO `produits` (`idProduit`, `nomProd`, `descProd`, `prixProd`, `imgProd
 (17, 'Shish Royal', 'Délicieuse délicatesse exotique.', '6', 'images/shishTaouk.jpg', 8),
 (18, 'Spaghetti Yolonaise', 'Delicieux spaghetti maison', '10', 'images/spagYolonaise.jpg', 6);
 
--- --------------------------------------------------------
-
---
--- Structure de la table `restaurants`
---
-
-CREATE TABLE `restaurants` (
-  `idResto` int(11) NOT NULL PRIMARY KEY AUTO_INCREMENT,
-  `nomResto` varchar(150) NOT NULL,
-  `idAdrs` int(11) NOT NULL,
-  `Actif` tinyint(1) NOT NULL DEFAULT '1'
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
-
 --
 -- Déchargement des données de la table `restaurants`
 --
@@ -327,105 +415,13 @@ INSERT INTO `restaurants` (`idResto`, `nomResto`, `idAdrs`, `Actif`) VALUES
 (2, 'Mon Mars', 2, 1),
 (3, 'Velo', 3, 0);
 
--- --------------------------------------------------------
+INSERT INTO `typecomptes` (`nomType`) VALUES
+('Admin'),
+('Gérant'),
+('Chef'),
+('Livreur'),
+('Client');
 
---
--- Structure de la table `typecomptes`
---
 
-CREATE TABLE `typecomptes` (
-  `idtype` int(11) NOT NULL PRIMARY KEY AUTO_INCREMENT,
-  `nomType` varchar(35) CHARACTER SET utf8 NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
---
--- Déchargement des données de la table `typecomptes`
---
 
-INSERT INTO `typecomptes` (`idtype`, `nomType`) VALUES
-(1, 'Admin'),
-(2, 'Gérant'),
-(3, 'Chef'),
-(4, 'Livreur'),
-(5, 'Client');
-
---
--- Index pour les tables déchargées
---
-
---
--- Index pour la table `commandes`
---
-ALTER TABLE `commandes`
-  ADD KEY `commandes_ibfk_2` (`noClient`),
-  ADD KEY `commandes_ibfk_4` (`idetat`),
-  ADD KEY `commandes_ibfk_1` (`idModePaiement`),
-  ADD KEY `commandes_ibfk_3` (`noAdrs`),
-  ADD KEY `commandes_ibfk_5` (`idMenu`);
-
---
--- Index pour la table `comptes`
---
-ALTER TABLE `comptes`
-  ADD KEY `notpCmpt` (`notpCmpt`),
-  ADD KEY `adrs_ibfk_2` (`noAdrs`);
-
---
--- Index pour la table `items_commande`
---
-ALTER TABLE `items_commande`
-  ADD KEY `itemcommandes_ibfk_1` (`noCommande`),
-  ADD KEY `itemcommandes_ibfk_2` (`noProduit`);
-
---
--- Index pour la table `menus`
---
-ALTER TABLE `menus`
-  ADD KEY `Menus_ibfk_1` (`idResto`);
-
---
--- Index pour la table `menu_produits`
---
-ALTER TABLE `menu_produits`
-  ADD KEY `menuprod_ibfk_1` (`idMenu`),
-  ADD KEY `menuprod_ibfk_2` (`idProduit`);
-
---
--- Index pour la table `produits`
---
-ALTER TABLE `produits`
-  ADD KEY `prod_ibfk_1` (`idCategorie`);
-
---
--- Index pour la table `restaurants`
---
-ALTER TABLE `restaurants`
-  ADD KEY `restaurants_ibfk_1` (`idAdrs`);
-
---
--- Contraintes pour la table `commandes`
---
-ALTER TABLE `commandes`
-  ADD CONSTRAINT `commandes_ibfk_1` FOREIGN KEY (`idModePaiement`) REFERENCES `modespaiements` (`idmode`),
-  ADD CONSTRAINT `commandes_ibfk_2` FOREIGN KEY (`noClient`) REFERENCES `comptes` (`noCompte`),
-  ADD CONSTRAINT `commandes_ibfk_3` FOREIGN KEY (`noAdrs`) REFERENCES `adresse` (`idAdrs`),
-  ADD CONSTRAINT `commandes_ibfk_4` FOREIGN KEY (`idetat`) REFERENCES `etatcommandes` (`idetat`),
-  ADD CONSTRAINT `commandes_ibfk_5` FOREIGN KEY (`idMenu`) REFERENCES `menus` (`idmenu`);
-
---
--- Contraintes pour la table `comptes`
---
-ALTER TABLE `comptes`
-  ADD CONSTRAINT `adrs_ibfk_2` FOREIGN KEY (`noAdrs`) REFERENCES `adresses` (`idAdrs`),
-  ADD CONSTRAINT `comptes_ibfk_1` FOREIGN KEY (`notpCmpt`) REFERENCES `typecomptes` (`idtype`);
-
---
--- Contraintes pour la table `produits`
---
-ALTER TABLE `produits`
-  ADD CONSTRAINT `prod_ibfk_1` FOREIGN KEY (`idcategorie`) REFERENCES `categories` (`idCategorie`);
-COMMIT;
-
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
