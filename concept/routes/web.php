@@ -940,29 +940,58 @@ $app->get('/confirmationCommande', function () use ($app) {
     $connexion = obtenirConnexion();
 
     $requete = $connexion->prepare(
-        'SELECT idMenu FROM menus ' .
-        'INNER JOIN restaurants ON menus.idResto = restaurant.idResto ' .
-        'WHERE nomResto= :nomResto AND actif=1 ');
+        'SELECT idresto ' .
+        'FROM restaurants ' .
+        'WHERE nomresto = :nomresto');
+    $requete->execute(['nomresto' => $_SESSION['nomRestoSel']]);
+    $idResto = $requete->fetch();
+    $requete->closeCursor();
 
-    $requete->execute(['nomResto' => $_SESSION['nomRestoSel']]);
+    $requete = $connexion->prepare(
+        'SELECT idMenu FROM menus ' .
+        'WHERE idResto = :idResto AND actif = :actif ');
+
+    $requete->execute(['idResto' => $idResto['idresto'], 'actif' => '1']);
     $idMenu = $requete->fetch();
     $requete->closeCursor();
     
-    $requete = $connexion->prepare(
-        'INSERT INTO adresses ' .
-        '(noCvq, Rue, ville, province, codePostal, telephone) ' .
-        'VALUES(:noCvq, :Rue, :ville, :province, :codePostal, :telephone) ');
+    if(!isset($_SESSION['noCvq']))
+    {
+        $requete = $connexion->prepare(
+            'SELECT idAdrs FROM restaurants ' .
+            'WHERE idResto = :idResto ');
+        $requete->execute(['idResto' => $idResto['idresto']]);
+        $idAdrs = $requete->fetch();
+        $requete->closeCursor();
+    }
+    else
+    {
+        $requete = $connexion->prepare(
+            'SELECT count(*) as compteur FROM adresses ' .
+            'WHERE noCvq = :noCvq AND codePostal = :codePostal ' .
+            'AND telephone = :telephone ');
+        $requete->execute(['noCvq' => $_SESSION['noCvq'],'codePostal' => $_SESSION['codePostal'],'telephone' => $_SESSION['telephone']]);
+        $count = $requete->fetch();
+        $requete->closeCursor();
 
-    $requete->execute(['noCvq' => $_SESSION['noCvq'], 'Rue' => $_SESSION['Rue'], 'ville' => $_SESSION['ville'], 'province' => 'QC', 'codePostal' => $_SESSION['codePostal'],'telephone' => $_SESSION['telephone']]);
-    $requete->closeCursor();
-    
-    $requete = $connexion->prepare(
-        'SELECT idAdrs FROM adresses ' .
-        'WHERE telephone = :telephone AND noCvq = :noCvq ');
+        if($count['compteur'] == 0)
+        {
+            $requete = $connexion->prepare(
+                'INSERT INTO adresses ' .
+                '(noCvq, Rue, ville, province, codePostal, telephone) ' .
+                'VALUES(:noCvq, :Rue, :ville, :province, :codePostal, :telephone) ');
+            $requete->execute(['noCvq' => $_SESSION['noCvq'], 'Rue' => $_SESSION['Rue'], 'ville' => $_SESSION['ville'], 'province' => 'QC', 'codePostal' => $_SESSION['codePostal'],'telephone' => $_SESSION['telephone']]);
+            $requete->closeCursor();
 
-    $requete->execute(['telephone' => $_SESSION['telephone'], 'noCvq' => $_SESSION['noCvq']]);
-    $idAdrs = $requete->fetch();
-    $requete->closeCursor();
+        }
+
+        $requete = $connexion->prepare(
+            'SELECT idAdrs FROM adresses ' .
+            'WHERE telephone = :telephone AND noCvq = :noCvq AND codePostal = :codePostal');
+        $requete->execute(['telephone' => $_SESSION['telephone'], 'noCvq' => $_SESSION['noCvq'],'codePostal' => $_SESSION['codePostal']]);
+        $idAdrs = $requete->fetch();
+        $requete->closeCursor();
+    }
 
     $requete = $connexion->prepare(
         'SELECT idmode ' .
@@ -974,10 +1003,10 @@ $app->get('/confirmationCommande', function () use ($app) {
     
     $requete = $connexion->prepare(
         'INSERT INTO commandes ' .
-        '( datecommande, idetat, idmodepaiement, noClient, noAdrs, idMenu) ' .
-        'VALUES( SYSDATE() , 8, :idmodepaiement, :noClient, :noAdrs, :idMenu) ');
+        '( datecommande, idetat, idmodepaiement, noClient, noAdrs, idMenu, commentaires) ' .
+        'VALUES( SYSDATE() , 8, :idmodepaiement, :noClient, :noAdrs, :idMenu, :commentaires) ');
 
-    $requete->execute(['idmodepaiement' => $idmode, 'noClient' => $_SESSION['utilisateur']['noCompte'], 'noAdrs' => $idAdrs, 'idMenu' => $idMenu]);
+    $requete->execute(['idmodepaiement' => $idmode['idmode'], 'noClient' => $_SESSION['utilisateur']['nocompte'], 'noAdrs' => $idAdrs['idAdrs'], 'idMenu' => $idMenu['idMenu'], 'commentaires' => ' ']);
     $requete->closeCursor();
     
     $requete = $connexion->prepare(
@@ -986,21 +1015,44 @@ $app->get('/confirmationCommande', function () use ($app) {
         'order by datecommande desc ' .
         'limit 1');
 
-    $requete->execute(['noClient' => $_SESSION['utilisateur']['noCompte']]);
+    $requete->execute(['noClient' => $_SESSION['utilisateur']['nocompte']]);
     $idCommande = $requete->fetch();
     $requete->closeCursor();
 
-    $requete = $connexion->prepare(
-        'INSERT INTO items_commande ' .
-        '(noCommande, noProduit, qte) ' .
-        'VALUES(:noCommande, :noProduit, 1) ');
+    
 
     foreach ($_SESSION['itemsCommande'] as $unItem) 
     {
-        $requete->execute(['noCommande' => $idCommande, 'noProduit' => $unItem['idProduit']]);    
-    }
+        $requete = $connexion->prepare(
+            'SELECT count(*) as compteur FROM items_commande ' .
+            'WHERE noCommande = :noCommande ' .
+            'AND noProduit = :noProduit ');
+        $requete->execute(['noCommande' => $idCommande['idCommande'],'noProduit' => $unItem['idProduit']]);
+        $count = $requete->fetch();
+        $requete->closeCursor();
 
-    $requete->closeCursor();   
+        if($count['compteur'] > 0)
+        {
+            $requete = $connexion->prepare(
+                'UPDATE items_commande ' .
+                'SET qte = qte+1 ' .
+                'WHERE noCommande = :noCommande AND noProduit = :noProduit ');
+            $requete->execute(['noCommande' => $idCommande['idCommande'], 'noProduit' => $unItem['idProduit']]);
+            $requete->closeCursor();
+        }
+        else
+        {
+            $requete = $connexion->prepare(
+                'INSERT INTO items_commande ' .
+                '(noCommande, noProduit, qte) ' .
+                'VALUES(:noCommande, :noProduit, 1) ');
+
+            $requete->execute(['noCommande' => $idCommande['idCommande'], 'noProduit' => $unItem['idProduit']]);
+            $requete->closeCursor();
+        }
+            
+    }
+  
     $connexion = null;
 
     return view('/confirmationCommande');
