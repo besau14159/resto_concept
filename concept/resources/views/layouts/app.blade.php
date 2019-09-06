@@ -18,7 +18,6 @@
       <a class="navbar-brand" href="/">Concept!</a>
       <div class="text-right">
         @IF(!ISSET($_SESSION['utilisateur']))
-        
         <a class="btn btn-outline-success" href="sinscrire" type="button">Inscription</a>
         <a class="btn btn-outline-success" href="connexion" type="button">Se connecter</a>
         @ELSE
