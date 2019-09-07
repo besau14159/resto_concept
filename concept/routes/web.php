@@ -991,7 +991,7 @@ $app->get('/confirmationCommande', function () use ($app) {
         '( datecommande, idetat, idmodepaiement, noClient, noAdrs, idMenu) ' .
         'VALUES( SYSDATE() , 8, :idmodepaiement, :noClient, :noAdrs, :idMenu) ');
 
-    $requete->execute(['idmodepaiement' => $idmode, 'noClient' => $_SESSION['utilisateur']['noCompte'], 'noAdrs' => $idAdrs, 'idMenu' => $idMenu]);
+    $requete->execute(['idmodepaiement' => $idmode, 'noClient' => $_SESSION['utilisateur']['nocompte'], 'noAdrs' => $idAdrs, 'idMenu' => $idMenu]);
     $requete->closeCursor();
     
     $requete = $connexion->prepare(

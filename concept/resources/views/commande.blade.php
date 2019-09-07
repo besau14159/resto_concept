@@ -53,11 +53,9 @@
 			</div>
 
 			<div class="col-3" style = "border:1px solid white">
-
+				@if ($_SESSION['typeCommande'] == 'Pour Livrer')
 				<div class="row">
       				<div class="col-12 text-center" style = "border:1px solid white">Adresse de livraisson
-
-      						@if ($_SESSION['typeCommande'] == 'Pour Livrer')
 	      						<div class="form-group">
 						    		<input type="adr" class="form-control" id="adr1" aria-describedby="emailHelp" placeholder="{{ $_SESSION['noCvq'] }}">
 		                 		</div>
@@ -76,31 +74,9 @@
 		                 		<div class="form-group">
 						    		<input type="adr" class="form-control" id="adr6" aria-describedby="emailHelp" placeholder="{{ $_SESSION['telephone'] }}">
 		                 		</div>
-		                 	@endif
-
-		                 	@if ($_SESSION['typeCommande'] == 'Pour Emporter')
-	      						<div class="form-group">
-						    		<input type="adr" class="form-control" id="adr1" aria-describedby="emailHelp" placeholder="{{ $_SESSION['donneesAdr'][0]["noCvq"] }}">
-		                 		</div>
-		                 		<div class="form-group">
-						    		<input type="adr" class="form-control" id="adr2" aria-describedby="emailHelp" placeholder="{{ $_SESSION['donneesAdr'][0]["Rue"] }}">
-		                 		</div>
-		                 		<div class="form-group">
-						    		<input type="adr" class="form-control" id="adr3" aria-describedby="emailHelp" placeholder="{{ $_SESSION['donneesAdr'][0]["ville"] }}">
-		                 		</div>
-		                 		<div class="form-group">
-						    		<input type="adr" class="form-control" id="adr4" aria-describedby="emailHelp" placeholder="{{ $_SESSION['donneesAdr'][0]["province"] }}">
-		                 		</div>
-		                 		<div class="form-group">
-						    		<input type="adr" class="form-control" id="adr5" aria-describedby="emailHelp" placeholder="{{ $_SESSION['donneesAdr'][0]["codePostal"] }}">
-		                 		</div>
-		                 		<div class="form-group">
-						    		<input type="adr" class="form-control" id="adr6" aria-describedby="emailHelp" placeholder="{{ $_SESSION['donneesAdr'][0]["telephone"] }}">
-		                 		</div>
-		                 	@endif	
-
       				</div>
     			</div>
+               @endif
 
     			<div class="row">
       				<div class="col-12 text-center" style = "border:1px solid white">Produits commande
