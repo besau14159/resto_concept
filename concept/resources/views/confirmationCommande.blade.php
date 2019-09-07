@@ -36,22 +36,47 @@
 
 				<div class="row">
       				<div class="col-12 text-center" style = "border:1px solid white">Adresse de livraisson
-      					@if (isset($_SESSION['inputCity']))
-      						@if ($_SESSION['typeCommande'] == 'Pour Livrer')
-	      						<div class="form-group">
-						    		<input type="modePaiement" class="form-control" id="modePaiement" aria-describedby="emailHelp" placeholder="{{ $_SESSION['inputAddress'] }}">
-		                 		</div>
-		                 		<div class="form-group">
-						    		<input type="modePaiement" class="form-control" id="modePaiement" aria-describedby="emailHelp" placeholder="{{ $_SESSION['inputAddress2'] }}">
-		                 		</div>
-		                 		<div class="form-group">
-						    		<input type="modePaiement" class="form-control" id="modePaiement" aria-describedby="emailHelp" placeholder="{{ $_SESSION['postalCode'] }}">
-		                 		</div>
-		                 		<div class="form-group">
-						    		<input type="modePaiement" class="form-control" id="modePaiement" aria-describedby="emailHelp" placeholder="{{ $_SESSION['inputCity'] }}">
-		                 		</div>
-		                 	@endif	
-	                 	@endif	
+      					@if ($_SESSION['typeCommande'] == 'Pour Livrer')
+                    <div class="form-group">
+                    <input type="adr" class="form-control" id="adr1" aria-describedby="emailHelp" placeholder="{{ $_SESSION['noCvq'] }}">
+                        </div>
+                        <div class="form-group">
+                    <input type="adr" class="form-control" id="adr2" aria-describedby="emailHelp" placeholder="{{ $_SESSION['Rue'] }}">
+                        </div>
+                        <div class="form-group">
+                    <input type="adr" class="form-control" id="adr3" aria-describedby="emailHelp" placeholder="{{ $_SESSION['ville'] }}">
+                        </div>
+                        <div class="form-group">
+                    <input type="adr" class="form-control" id="adr4" aria-describedby="emailHelp" placeholder="{{ $_SESSION['province'] }}">
+                        </div>
+                        <div class="form-group">
+                    <input type="adr" class="form-control" id="adr5" aria-describedby="emailHelp" placeholder="{{ $_SESSION['codePostal'] }}">
+                        </div>
+                        <div class="form-group">
+                    <input type="adr" class="form-control" id="adr6" aria-describedby="emailHelp" placeholder="{{ $_SESSION['telephone'] }}">
+                        </div>
+                      @endif
+
+                      @if ($_SESSION['typeCommande'] == 'Pour Emporter')
+                    <div class="form-group">
+                    <input type="adr" class="form-control" id="adr1" aria-describedby="emailHelp" placeholder="{{ $_SESSION['donneesAdr'][0]["noCvq"] }}">
+                        </div>
+                        <div class="form-group">
+                    <input type="adr" class="form-control" id="adr2" aria-describedby="emailHelp" placeholder="{{ $_SESSION['donneesAdr'][0]["Rue"] }}">
+                        </div>
+                        <div class="form-group">
+                    <input type="adr" class="form-control" id="adr3" aria-describedby="emailHelp" placeholder="{{ $_SESSION['donneesAdr'][0]["ville"] }}">
+                        </div>
+                        <div class="form-group">
+                    <input type="adr" class="form-control" id="adr4" aria-describedby="emailHelp" placeholder="{{ $_SESSION['donneesAdr'][0]["province"] }}">
+                        </div>
+                        <div class="form-group">
+                    <input type="adr" class="form-control" id="adr5" aria-describedby="emailHelp" placeholder="{{ $_SESSION['donneesAdr'][0]["codePostal"] }}">
+                        </div>
+                        <div class="form-group">
+                    <input type="adr" class="form-control" id="adr6" aria-describedby="emailHelp" placeholder="{{ $_SESSION['donneesAdr'][0]["telephone"] }}">
+                        </div>
+                      @endif
       				</div>
     			</div>
 
@@ -136,7 +161,14 @@
             unset($_SESSION['typeCommande']);
             unset($_SESSION['modePaiementSel']);
             unset($_SESSION['itemsCommande']);
-            unset($_SESSION['listeRestaurants']);   
+            unset($_SESSION['listeRestaurants']);  
+            unset($_SESSION['produitsParCat']); 
+            unset($_SESSION['noCvq']);
+            unset($_SESSION['Rue']);
+            unset($_SESSION['ville']);
+            unset($_SESSION['province']);
+            unset($_SESSION['codePostal']);
+            unset($_SESSION['telephone']);
           @endphp
               <div class="col-12 text-center" style = "border:1px solid white">
                 <a href="/commande"  class="btn btn-secondary btn-lg btn-block" role="button" aria-pressed="true">NOUVELLE COMMANDE</a>
