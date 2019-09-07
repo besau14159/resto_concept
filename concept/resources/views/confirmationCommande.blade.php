@@ -13,7 +13,7 @@
       </div>
 
 			<div class="col-2 text-center" style = "border:1px solid white">Numero commande
-
+          <h3 class="text-center">{{ $_SESSION['idCommandeDerniere'] }}</h3>          
 			</div>
 
 			<div class="col-7 text-center" style = "border:1px solid white">Restaurant 
@@ -147,6 +147,7 @@
             unset($_SESSION['province']);
             unset($_SESSION['codePostal']);
             unset($_SESSION['telephone']);
+            unset($_SESSION['idCommandeDerniere']);
           @endphp
               <div class="col-12 text-center" style = "border:1px solid white">
                 <a href="/commande"  class="btn btn-secondary btn-lg btn-block" role="button" aria-pressed="true">NOUVELLE COMMANDE</a>
